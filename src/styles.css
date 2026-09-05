@@ -341,6 +341,51 @@ textarea {
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.settings-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  min-height: 108px;
+  padding: 1.1rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--paper-2), #fdfaf1);
+  box-shadow: var(--shadow);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.settings-tile svg {
+  color: var(--moss);
+}
+
+.settings-tile:hover {
+  border-color: var(--moss-deep);
+}
+
+.settings-tile:focus-visible {
+  outline: 2px solid var(--moss);
+  outline-offset: 2px;
+}
+
+.settings-tile-label {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.settings-tile-hint {
+  font-size: 0.74rem;
+  color: var(--ink-faint);
+}
+
 .grid-stats {
   display: grid;
   gap: 0.75rem;
