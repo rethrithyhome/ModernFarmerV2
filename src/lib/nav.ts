@@ -63,16 +63,6 @@ export function groupNav(items: NavItem[]): { group: NavGroup; items: NavItem[] 
     .filter((bucket) => bucket.items.length > 0);
 }
 
-/**
- * Bottom tab bar on phones: dashboard + up to 3 more, always in NAV order. When a role's
- * whole nav already fits in 4 tabs, everything gets a direct tab and no "more" sheet is
- * needed at all; otherwise the 4th slot is a "more" button that opens the full grouped list.
- */
-export function mobilePrimary(items: NavItem[]): { pinned: NavItem[]; needsMore: boolean } {
-  if (items.length <= 4) return { pinned: items, needsMore: false };
-  return { pinned: items.slice(0, 3), needsMore: true };
-}
-
 export const PAGE_TITLES: Record<Section, { title: string; sub: string }> = {
   dashboard: {
     title: "ផ្ទាំងសង្ខេបផលិតកម្ម",

@@ -1075,7 +1075,7 @@ textarea {
 
 /* --------------------------------- mobile --------------------------------- */
 
-.tabs {
+.mobile-menu-btn {
   display: none;
 }
 
@@ -1113,43 +1113,23 @@ textarea {
   }
 
   .main {
-    padding-bottom: 6.25rem;
+    padding-bottom: 1.6rem;
   }
 
-  .tabs {
-    position: fixed;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 30;
+  .mobile-menu-btn {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 1fr;
-    border-top: 1px solid var(--line);
-    background: rgb(29 43 31 / 97%);
-    padding: 0.25rem 0.25rem calc(0.25rem + env(safe-area-inset-bottom));
-  }
-
-  .tab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
-    min-height: 54px;
-    padding: 0.3rem 0.15rem;
-    border: none;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgb(255 255 255 / 20%);
     border-radius: 10px;
-    background: none;
-    color: #cfd6c4;
-    font-size: 0.7rem;
-    line-height: 1.1;
+    background: rgb(255 255 255 / 8%);
+    color: #f2ecdc;
     cursor: pointer;
   }
 
-  .tab[aria-current="page"] {
-    background: #f2ecdc;
-    color: #1d2b1f;
-    font-weight: 700;
+  .mobile-menu-btn:hover {
+    background: rgb(255 255 255 / 14%);
   }
 
   .sheet-backdrop {
@@ -1223,7 +1203,7 @@ textarea {
 
 @media print {
   .rail,
-  .tabs,
+  .mobile-menu-btn,
   .save-bar,
   .btn {
     display: none !important;
@@ -1333,8 +1313,6 @@ textarea {
 
 /* Only the labels print; everything else on screen stays out of the paper. */
 body.printing .rail,
-body.printing .tabs,
-body.printing .subnav,
 body.printing .page-head,
 body.printing .panel:not(.print-zone),
 body.printing .save-bar,

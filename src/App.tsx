@@ -5,7 +5,7 @@ import type { Prefs } from "./lib/prefs";
 import { FirstRun } from "./ui/FirstRun";
 import { Login } from "./ui/Login";
 import { clearData, hasNoDataset, resetSeed } from "./lib/store";
-import { GROUP_LABEL, PAGE_TITLES, groupNav, mobilePrimary, navForRole } from "./lib/nav";
+import { GROUP_LABEL, PAGE_TITLES, groupNav, navForRole } from "./lib/nav";
 import type { Go, Section, View } from "./lib/nav";
 import { NavIcon } from "./ui/icons";
 import { activeLots, alertsFor } from "./lib/engine";
@@ -167,6 +167,16 @@ export function App() {
           <span className="brand-sub">Modern Farmer · ប្រព័ន្ធគ្រប់គ្រងផលិតកម្មជីកំប៉ុស្តិ៍</span>
         </div>
 
+        <button
+          type="button"
+          className="mobile-menu-btn"
+          aria-label="ម៉ឺនុយ"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+        >
+          <NavIcon id="menu" size={22} />
+        </button>
+
         <nav className="nav" aria-label="ម៉ឺនុយសំខាន់">
           {groupNav(visibleNav).map((bucket, i) => (
             <div className="nav-group" key={bucket.group ?? `top-${i}`}>
@@ -277,33 +287,6 @@ export function App() {
         {view.section === "reports" && <Reports db={db} />}
         {view.section === "settings" && <Settings db={db} />}
       </main>
-
-      <nav className="tabs" aria-label="របារម៉ឺនុយ">
-        {mobilePrimary(visibleNav).pinned.map((item) => (
-          <button
-            key={item.section}
-            type="button"
-            className="tab"
-            aria-current={view.section === item.section ? "page" : undefined}
-            onClick={() => go(item.section)}
-          >
-            <NavIcon id={item.section} size={20} />
-            <span>{item.label}</span>
-          </button>
-        ))}
-        {mobilePrimary(visibleNav).needsMore && (
-          <button
-            type="button"
-            className="tab"
-            aria-current={menuOpen ? "page" : undefined}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen(true)}
-          >
-            <NavIcon id="menu" size={20} />
-            <span>ម៉ឺនុយ</span>
-          </button>
-        )}
-      </nav>
 
       {menuOpen && (
         <div className="sheet-backdrop" onClick={() => setMenuOpen(false)}>
