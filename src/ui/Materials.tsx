@@ -295,7 +295,7 @@ function BuyForm({ material, db, onClose }: { material: Material; db: DbShape; o
         <Field label={`បរិមាណ (${material.unit})`} wide>
           <Num value={qty} onChange={setQty} step={10} />
         </Field>
-        <Field label="ថ្លៃជាទិញ (រៀល/ឯកតា)">
+        <Field label="ថ្លៃទិញ (រៀល/ឯកតា)">
           <Num value={price} onChange={setPrice} step={50} />
         </Field>
         <Field label="ថ្ងៃទទួល">

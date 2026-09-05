@@ -39,7 +39,7 @@ export function CloudSettings() {
       result.message
         ? `មិនអាចភ្ជាប់បានទេ៖ ${result.message} — សូម run supabase/schema.sql ហើយពិនិត្យ URL/key`
         : result.adopted === "device"
-          ? `ភ្ជាប់រួច · បានផ្ញើរ ${int(rowCountSafe())} ជួរដេកឡើង Supabase (workspace ទទេ)`
+          ? `ភ្ជាប់រួច · បានផ្ញើ ${int(rowCountSafe())} ជួរដេកឡើង Supabase (workspace ទទេ)`
           : `ភ្ជាប់រួច · បានទាញយក ${int(total)} ជួរដេកពី Supabase`,
     );
   };
@@ -90,7 +90,7 @@ export function CloudSettings() {
         </Button>
         <Button
           onClick={() =>
-            void flush(getDb()).then(() => setMessage("បានផ្ញើរការដែលកែថ្មីទៅ Supabase"))
+            void flush(getDb()).then(() => setMessage("បានផ្ញើការដែលកែថ្មីទៅ Supabase"))
           }
         >
           ផ្ញើទៅ Supabase

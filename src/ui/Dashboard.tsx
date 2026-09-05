@@ -131,7 +131,7 @@ export function Dashboard({ db, go }: { db: DbShape; go: Go }) {
           />
           <p className="panel-hint" style={{ marginTop: "0.9rem" }}>
             Lot ដែលត្រូវការសកម្មភាពថ្ងៃនេះ៖{" "}
-            <b>{int(lots.filter((l) => lotHealth(db, l).advice.length > 0).length)}</b> ជារបៀង — មើលនៅផែជារបៀងខាងក្រោម។
+            <b>{int(lots.filter((l) => lotHealth(db, l).advice.length > 0).length)}</b> ជារបៀង — មើលនៅផែនទីរបៀងខាងក្រោម។
           </p>
         </Panel>
       </div>

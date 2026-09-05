@@ -64,7 +64,7 @@ function LotList({ db, go }: { db: DbShape; go: Go }) {
             className={`btn ${view === "yard" ? "btn--primary" : "btn--quiet"}`}
             onClick={() => setView("yard")}
           >
-            ផែជារបៀង
+            ផែនទីរបៀង
           </button>
           <button
             type="button"

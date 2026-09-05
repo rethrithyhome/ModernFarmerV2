@@ -41,6 +41,7 @@ export function LotDetail({ db, lot, go }: { db: DbShape; lot: Lot; go: Go }) {
   const turn = turningAdvice(db, lot.id);
   const logs = logsForLot(db, lot.id);
   const tests = qcTestsForLot(db, lot.id);
+  const [confirmCostId, setConfirmCostId] = useState<string | null>(null);
   const finalTest = finalQcOf(db, lot.id);
   const perKg = lotCostPerKg(lot);
   const materialCost = lot.inputs.reduce((s, i) => s + i.cost, 0);
@@ -159,8 +160,21 @@ export function LotDetail({ db, lot, go }: { db: DbShape; lot: Lot; go: Go }) {
                   </span>
                   <span className="num row-actions" style={{ alignItems: "center" }}>
                     {int(c.amount)} រៀល
-                    <button className="icon-btn" onClick={() => removeLotCost(lot.id, c.id)} aria-label="លុបចំណាយ">
-                      ✕
+                    <button
+                      className="icon-btn"
+                      style={confirmCostId === c.id ? { color: "var(--clay)" } : undefined}
+                      onClick={() => {
+                        if (confirmCostId === c.id) {
+                          removeLotCost(lot.id, c.id);
+                          setConfirmCostId(null);
+                        } else {
+                          setConfirmCostId(c.id);
+                        }
+                      }}
+                      aria-label={confirmCostId === c.id ? "ចុចម្តងទៀតដើម្បីលុប" : "លុបចំណាយ"}
+                      title={confirmCostId === c.id ? "ចុចម្តងទៀតដើម្បីលុប" : undefined}
+                    >
+                      {confirmCostId === c.id ? "លុប?" : "✕"}
                     </button>
                   </span>
                 </li>

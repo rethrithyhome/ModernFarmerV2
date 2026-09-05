@@ -23,7 +23,7 @@ export function YardMap({
 
   return (
     <Panel
-      title="ផែជារបៀងក្នុងទីតាំង"
+      title="ផែនទីរបៀងក្នុងទីតាំង"
       hint={`${int(cells.length)} ជារបៀង · ${int(busy)} ជារបៀងកំពុងផ្កាម · ចុចជារបៀង ដើម្បីបន្ថែមការវាស់`}
       action={
         <button className="btn btn--quiet" onClick={() => go("lots")}>
@@ -78,7 +78,7 @@ export function YardMap({
         </div>
       ) : (
         <p className="empty">
-          គ្មានជារបៀង។ បើក Lot ដំបូង ហើយបញ្ចូលលេខជារបៀង (ឧ. W1) ដើម្បីឱ្យផែនេះបង្ហាញ។
+          គ្មានជារបៀង។ បើក Lot ដំបូង ហើយបញ្ចូលលេខជារបៀង (ឧ. W1) ដើម្បីឱ្យផែនទីនេះបង្ហាញ។
         </p>
       )}
       {!compact && (

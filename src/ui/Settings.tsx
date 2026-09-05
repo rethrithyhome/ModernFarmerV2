@@ -102,7 +102,7 @@ export function Settings({ db }: { db: DbShape }) {
               setJson(text);
               navigator.clipboard?.writeText(text).catch(() => undefined);
             }}
-            title="ចម្លងជួយផ្ញើរតាមចត ប៉ុន្តែមិនរាប់ជាបម្រុងទុកទេ"
+            title="ចម្លងជួយផ្ញើតាមចត ប៉ុន្តែមិនរាប់ជាបម្រុងទុកទេ"
           >
             ចម្លងទាំងអស់
           </Button>
@@ -171,7 +171,7 @@ export function Settings({ db }: { db: DbShape }) {
       </Panel>
 
       <Panel title="ទិន្នន័យគំរូ និងការសម្អាត" hint="ប្រើ «ទិន្នន័យគំរូ» សម្រាប់សាកល្បង ឬបង្ហាញរបៀបធ្វើការ">
-        <Table head={["ចំនួនកត់ត្រា", "សារពើ"]} dense>
+        <Table head={["ប្រភេទទិន្នន័យ", "ចំនួនកត់ត្រា"]} dense>
           <tr>
             <td>វត្ថុធាតុដើម</td>
             <td className="n">{int(db.materials.length)}</td>
@@ -219,8 +219,8 @@ export function Settings({ db }: { db: DbShape }) {
             <>
               <p className="panel-hint">
                 {confirm === "reset"
-                  ? "បន្ទាប់មន្តទៅនឹងទិន្នន័យគំរូ 7 ខែ — ទិន្នន័យបច្ចុប្បន្ននឹងបាត់។"
-                  : "បន្ទាប់មន្តទទេ — គ្រប់ Lot ស្តុក និងរបាយការណ៍ត្រូវលុច។"}
+                  ? "នឹងផ្ទុកទិន្នន័យគំរូ 7 ខែជំនួសវិញ — ទិន្នន័យបច្ចុប្បន្ននឹងបាត់។"
+                  : "នឹងធ្វើទិន្នន័យទទេ — គ្រប់ Lot ស្តុក និងរបាយការណ៍ត្រូវលុប។"}
               </p>
               <Button
                 variant={confirm === "clear" ? "danger" : "primary"}

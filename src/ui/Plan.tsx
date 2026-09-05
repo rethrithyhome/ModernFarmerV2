@@ -86,7 +86,7 @@ export function Plan({ db, go }: { db: DbShape; go: Go }) {
 
       <Panel
         title="តារាងគម្រោង vs ការផលិតជាក់ស្តែង"
-        hint="«បញ្ចប់» = Lot ដែលបានបិញ · «រំពឹង» = Lot ដែលកំពុងផ្កាមនឹងបញ្ចប់ក្នុងខែនោះ"
+        hint="«បញ្ចប់» = Lot ដែលបានបិទ · «រំពឹង» = Lot ដែលកំពុងផ្កាមនឹងបញ្ចប់ក្នុងខែនោះ"
       >
         <Table head={["ខែ", "គោលដៅ", "បញ្ចប់", "រំពឹង", "សរុបរំពឹង", "% គោលដៅ", "Lot", ""]} dense>
           {rows.map((r) => {
@@ -341,6 +341,7 @@ function OverheadPanel({ db, month }: { db: DbShape; month: string }) {
   const [category, setCategory] = useState("labour");
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
+  const [confirmId, setConfirmId] = useState<string | null>(null);
   const value = Number(amount.replace(/[^\d]/g, "")) || 0;
   return (
     <Panel
@@ -355,8 +356,20 @@ function OverheadPanel({ db, month }: { db: DbShape; month: string }) {
               <td className="n">{int(o.amount)}</td>
               <td className="panel-hint">{o.note ?? "—"}</td>
               <td>
-                <button className="btn btn--quiet" onClick={() => removeOverhead(o.id)}>
-                  ដកចេញ
+                <button
+                  className="btn btn--quiet"
+                  style={confirmId === o.id ? { color: "var(--clay)", borderColor: "var(--clay)" } : undefined}
+                  onClick={() => {
+                    if (confirmId === o.id) {
+                      removeOverhead(o.id);
+                      setConfirmId(null);
+                    } else {
+                      setConfirmId(o.id);
+                    }
+                  }}
+                  title={confirmId === o.id ? "ចុចម្តងទៀតដើម្បីលុប" : undefined}
+                >
+                  {confirmId === o.id ? "ចុចម្តងទៀត?" : "ដកចេញ"}
                 </button>
               </td>
             </tr>
