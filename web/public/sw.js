@@ -12,7 +12,7 @@
  *   /api/*          → បណ្តាញមុន  (បើដាច់ ប្រើច្បាប់ចម្លងចុងក្រោយ)
  */
 
-const VERSION = 'v3';
+const VERSION = 'v4';
 const SHELL_CACHE = `mf-shell-${VERSION}`;
 const ASSET_CACHE = `mf-assets-${VERSION}`;
 const DATA_CACHE = `mf-data-${VERSION}`;
