@@ -385,12 +385,12 @@ gunzip -c mf-2026-09-05.sql.gz | sudo -u postgres psql modern_farmer
 1. ចុច **SQL Editor** នៅរបារខាងឆ្វេង → **New query**
 2. បើកឯកសារ `db/schema.sql` ក្នុងកម្មវិធីណាមួយលើកុំព្យូទ័រអ្នក (Notepad ក៏បាន) → ចម្លងខ្លឹមសារទាំងអស់ → ថតចូល SQL Editor → ចុច **Run**
 3. ធ្វើដដែលសម្រាប់ `db/migration_002_sales_finance.sql` (New query → ចម្លង → Run)
-4. ធ្វើដដែលសម្រាប់ `db/migration_003_offline.sql` រួច `db/migration_004_users.sql`
+4. ធ្វើដដែលសម្រាប់ `db/migration_003_offline.sql` · `db/migration_004_users.sql` · `db/migration_005_currency_riel.sql`
 5. ចុងក្រោយ ធ្វើដដែលសម្រាប់ `db/seed.sql` — នេះបញ្ចូលទិន្នន័យដំបូង (ឯកតា ផលិតផល វេចខ្ចប់) និងគណនី admin ជាមួយ៖
    - អ៊ីមែល: `admin@modernfarmer.kh`
    - ពាក្យសម្ងាត់: `ChangeMe123!`
 
-រត់តាមលំដាប់ខាងលើ (schema → 002 → 003 → 004 → seed) ព្រោះនីមួយៗពឹងផ្អែកលើមុន។ បើឃើញ "Success. No rows returned" គឺត្រឹមត្រូវហើយ។
+រត់តាមលំដាប់ខាងលើ (schema → 002 → 003 → 004 → 005 → seed) ព្រោះនីមួយៗពឹងផ្អែកលើមុន។ បើឃើញ "Success. No rows returned" គឺត្រឹមត្រូវហើយ។
 
 > ខ្ញុំបានសាកល្បងឯកសារ `seed.sql` នេះលើ PostgreSQL ពិត ហើយចូលប្រព័ន្ធបានជោគជ័យដោយប្រើពាក្យសម្ងាត់ខាងលើ។
 
