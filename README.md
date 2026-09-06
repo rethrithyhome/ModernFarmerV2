@@ -350,7 +350,34 @@ web/
 
 ---
 
-## ៨. មុនដាក់ដំណើរការពិត (Production checklist)
+## ៨. ការព្រមានពេល `npm install`
+
+`npm` កំណែ ១២ បង្ហាញការព្រមាន ២ ប្រភេទ។ **ទាំងពីរមិនរារាំងការដំណើរការទេ។**
+
+**១. `install-scripts ... esbuild`**
+
+npm ១២ ទប់ស្កាត់ script ដំឡើងរបស់ package ដោយស្វ័យប្រវត្តិ ដើម្បីសុវត្ថិភាព។
+យើងបានសាកល្បង៖ `npm run build` និង `npm test` **ដំណើរការធម្មតា** ទោះមិនអនុញ្ញាត។
+ដូច្នេះមិនបាច់ធ្វើអ្វីទេ។ បើចង់លុបការព្រមាន៖
+
+```bash
+npm install-scripts approve esbuild
+```
+
+**២. `vulnerabilities`**
+
+បានដោះស្រាយហើយទាំង frontend និង backend។ ឥឡូវ `npm audit` បង្ហាញ **0 vulnerabilities** ទាំងសងខាង។
+
+| កន្លែង | អ្វីដែលកែ |
+|---|---|
+| `web/` | `react-router-dom` ៦ → ៧ · `vite` ៥ → ៧ |
+| root | `qs` និង `body-parser` (DoS ក្នុង Express) ដោះស្រាយតាម `overrides` ក្នុង `package.json` |
+
+**ហេតុអ្វីប្រើ `overrides` មិនប្តូរ Express ទៅកំណែ ៥?** Express ៥ ប្តូររបៀបកំណត់ផ្លូវ (`app.get('*')` លែងដំណើរការ) ដែលនឹងធ្វើឱ្យការបម្រើផ្ទាំងខូច។ `overrides` ដោះស្រាយ CVE ដដែល ដោយមិនប្រថុយ។
+
+---
+
+## ៩. មុនដាក់ដំណើរការពិត (Production checklist)
 
 - [ ] ប្តូរ `JWT_SECRET` ជាតម្លៃចៃដន្យវែង
 - [ ] ប្តូរពាក្យសម្ងាត់ admin
