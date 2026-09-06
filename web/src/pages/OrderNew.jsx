@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData, Section, Loading, Notice, Field } from '../ui';
+import { useData, Section, Loading, Notice, Field, SearchSelect } from '../ui';
 import { api, money, currencyLabel } from '../api';
+
+const NO_CUSTOMER = { id: '', label: 'អតិថិជនទូទៅ (មិនកត់ឈ្មោះ)' };
 
 export default function OrderNew() {
   const nav = useNavigate();
-  const customers = useData('/customers');
   const stock = useData('/inventory/finished');
   const products = useData('/catalog/products');
 
@@ -15,7 +16,25 @@ export default function OrderNew() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
-  if (customers.loading || stock.loading || products.loading) return <Loading />;
+  /**
+   * ស្វែងរកអតិថិជនតាមឈ្មោះ ឬលេខទូរស័ព្ទ — ពន្យារ ៣០០ ms កុំឱ្យសួរម៉ាស៊ីនមេ
+   * រាល់តួអក្សរ។ លេខទូរស័ព្ទស្ទួនគ្នាធ្វើឱ្យជ្រើសខុសបានងាយ ដូច្នេះការស្វែងរក
+   * ដោយវាយលេខផ្ទាល់ជួយកាត់បន្ថយកំហុសនេះ ជាងបញ្ជីទម្លាក់ចុះវែងមួយ។
+   */
+  const [custQuery, setCustQuery] = useState('');
+  const [custApplied, setCustApplied] = useState('');
+  useEffect(() => {
+    const t = setTimeout(() => setCustApplied(custQuery.trim()), 300);
+    return () => clearTimeout(t);
+  }, [custQuery]);
+  const customers = useData(
+    `/customers${custApplied ? `?search=${encodeURIComponent(custApplied)}` : ''}`
+  );
+  const customerItems = (customers.data || []).map((c) => ({
+    id: c.customer_id, label: c.name, sub: c.phone_display || '',
+  }));
+
+  if (stock.loading || products.loading) return <Loading />;
 
   const allVariants = products.data.flatMap((p) => p.variants.map((v) => ({ ...v, product: p.name_km })));
   const priceOf = (id) => Number(allVariants.find((v) => v.id === Number(id))?.sell_price || 0);
@@ -55,14 +74,15 @@ export default function OrderNew() {
       <Section title="លក់ថ្មី">
         <Notice tone="error">{error}</Notice>
         <Field label="អតិថិជន">
-          <select value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
-            <option value="">អតិថិជនទូទៅ (មិនកត់ឈ្មោះ)</option>
-            {customers.data.map((c) => (
-              <option key={c.customer_id} value={c.customer_id}>
-                {c.name}{c.phone_display ? ` · ${c.phone_display}` : ''}
-              </option>
-            ))}
-          </select>
+          <SearchSelect
+            items={customerItems}
+            value={customerId}
+            onChange={setCustomerId}
+            onQuery={setCustQuery}
+            filterLocally={false}
+            emptyOption={NO_CUSTOMER}
+            placeholder="វាយឈ្មោះ ឬលេខទូរស័ព្ទ…"
+          />
         </Field>
       </Section>
 

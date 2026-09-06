@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData, Section, Loading, Notice, Field } from '../ui';
+import { useData, Section, Loading, Notice, Field, SearchSelect } from '../ui';
 import { api, money, kg, currencyLabel } from '../api';
 
 const blank = { raw_material_id: '', qty_input: '', unit_code: 'kg', unit_price_kg: '' };
@@ -19,6 +19,15 @@ export default function PurchaseNew() {
 
   if (suppliers.loading || materials.loading || units.loading) return <Loading />;
 
+  // ជម្រុញលេខទូរស័ព្ទចូល "sub" ដើម្បីអាចវាយស្វែងរកបាន — អ្នកផ្គត់ផ្គង់ឈ្មោះស្រដៀងគ្នា
+  // ច្រឡំបានងាយ ជាពិសេសបើលេខទូរស័ព្ទស្ទួន
+  const supplierItems = suppliers.data.map((s) => ({
+    id: s.id,
+    label: s.name,
+    sub: [s.phone_display, s.on_time_pct != null ? `ទាន់ពេល ${s.on_time_pct}%` : null]
+      .filter(Boolean).join(' · '),
+  }));
+
   const unitFactor = (code) =>
     Number(units.data.find((u) => u.unit_code === code)?.factor_to_kg || 1);
 
@@ -32,6 +41,10 @@ export default function PurchaseNew() {
 
   async function submit(e) {
     e.preventDefault();
+    if (!supplierId) {
+      setError('សូមជ្រើសរើសអ្នកផ្គត់ផ្គង់');
+      return;
+    }
     setBusy(true);
     setError('');
     try {
@@ -60,14 +73,12 @@ export default function PurchaseNew() {
         <Notice tone="error">{error}</Notice>
 
         <Field label="អ្នកផ្គត់ផ្គង់">
-          <select value={supplierId} onChange={(e) => setSupplierId(e.target.value)} required>
-            <option value="">— ជ្រើសរើស —</option>
-            {suppliers.data.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}{s.on_time_pct != null ? ` · ទាន់ពេល ${s.on_time_pct}%` : ''}
-              </option>
-            ))}
-          </select>
+          <SearchSelect
+            items={supplierItems}
+            value={supplierId}
+            onChange={setSupplierId}
+            placeholder="វាយឈ្មោះ ឬលេខទូរស័ព្ទ…"
+          />
         </Field>
 
         <Field label="កាលបរិច្ឆេទរំពឹងទទួល">

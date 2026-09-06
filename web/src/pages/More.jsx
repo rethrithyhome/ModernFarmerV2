@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth, can } from '../App';
 import { Section } from '../ui';
 
-const APP_VERSION = '2.8';
+const APP_VERSION = '3.0';
 
 export default function More() {
   const { user } = useAuth();

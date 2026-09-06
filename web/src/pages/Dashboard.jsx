@@ -1,14 +1,29 @@
 import { Link } from 'react-router-dom';
 import { useData, Section, Loading, Notice, Empty, Tag } from '../ui';
+import { TrendLine, HorizontalBars } from '../Charts';
 import { money, kg } from '../api';
 import { useAuth, can } from '../App';
+
+const WEEKDAY_KM = ['អា', 'ច', 'អ', 'ព', 'ព្រ', 'សុ', 'ស'];
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { data, error, loading } = useData('/reports/dashboard');
+  const trend = useData('/reports/revenue-trend?days=14');
+  const byProduct = useData('/reports/sales-by-product');
 
   if (loading) return <Loading />;
   if (error) return <Notice tone="error">{error}</Notice>;
+
+  const trendPoints = trend.data?.map((r) => ({
+    label: new Date(r.day).getDay(),
+    value: Number(r.revenue),
+  }));
+
+  const topProducts = byProduct.data
+    ?.filter((p) => Number(p.revenue) > 0)
+    .slice(0, 5)
+    .map((p) => ({ label: p.name_km, value: Number(p.revenue) }));
 
   return (
     <>
@@ -19,6 +34,18 @@ export default function Dashboard() {
           {data.today.orders} វិក្កយបត្រ · ខែនេះ {money(data.this_month.revenue)} ពី {data.this_month.orders} វិក្កយបត្រ
         </div>
       </section>
+
+      {trendPoints && trendPoints.length > 0 && (
+        <Section title="និន្នាការចំណូល ១៤ ថ្ងៃ">
+          <TrendLine points={trendPoints} formatValue={money} formatLabel={(d) => WEEKDAY_KM[d]} />
+        </Section>
+      )}
+
+      {topProducts && topProducts.length > 0 && (
+        <Section title="ការលក់តាមផលិតផល" meta="សរុបគ្រប់ពេល">
+          <HorizontalBars items={topProducts} formatValue={money} />
+        </Section>
+      )}
 
       {data.low_stock.length > 0 && (
         <Section title="ស្តុកវត្ថុធាតុដើមជិតអស់" meta={`${data.low_stock.length} មុខ`}>
