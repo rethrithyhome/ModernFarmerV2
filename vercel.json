@@ -1,6 +1,7 @@
 {
   "buildCommand": "cd web && npm install && npm run build",
   "outputDirectory": "web/dist",
+  "regions": ["sin1"],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" }
   ],
