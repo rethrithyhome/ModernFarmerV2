@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useData, Section, Loading, Notice, Empty, Field } from '../ui';
-import { api, money, date } from '../api';
+import { api, money, date, currencyLabel } from '../api';
 
 function ExpenseForm({ categories, onDone }) {
   const [f, setF] = useState({ category_id: '', description: '', amount: '' });
@@ -33,7 +33,7 @@ function ExpenseForm({ categories, onDone }) {
             {categories.map((c) => <option key={c.id} value={c.id}>{c.name_km}</option>)}
           </select>
         </Field>
-        <Field label="ចំនួន ($)">
+        <Field label={`ចំនួន (${currencyLabel()})`}>
           <input type="number" step="any" min="0" value={f.amount} required
                  onChange={(e) => set({ amount: e.target.value })} />
         </Field>
@@ -48,15 +48,15 @@ function ExpenseForm({ categories, onDone }) {
 
 export default function Finance() {
   const [tab, setTab] = useState('pnl');
-  const pnl = useData('/finance/pnl');
-  const cats = useData('/finance/categories');
-  const exp = useData('/finance/expenses');
-  const ar = useData('/finance/receivables');
-  const assets = useData('/finance/assets');
+  // ទាញតែទិន្នន័យរបស់ផ្ទាំងដែលកំពុងបើក
+  const pnl = useData('/finance/pnl', { enabled: tab === 'pnl' || tab === 'expenses' });
+  const cats = useData('/finance/categories', { enabled: tab === 'expenses' });
+  const exp = useData('/finance/expenses', { enabled: tab === 'expenses' });
+  const ar = useData('/finance/receivables', { enabled: tab === 'ar' });
+  const assets = useData('/finance/assets', { enabled: tab === 'assets' });
   const [msg, setMsg] = useState(null);
   const [busy, setBusy] = useState(false);
 
-  if (pnl.loading || cats.loading) return <Loading />;
   if (pnl.error) return <Notice tone="error">{pnl.error}</Notice>;
 
   async function postDepreciation() {
@@ -66,7 +66,7 @@ export default function Finance() {
       setMsg({
         tone: 'ok',
         text: r.posted.length
-          ? `ប្រកាសរំលស់ ${r.posted.length} ទ្រព្យ សរុប $${money(r.total)}`
+          ? `ប្រកាសរំលស់ ${r.posted.length} ទ្រព្យ សរុប ${money(r.total)}`
           : 'ខែនេះបានប្រកាសរំលស់រួចហើយ',
       });
       exp.reload(); pnl.reload(); assets.reload();
@@ -92,18 +92,18 @@ export default function Finance() {
 
       {tab === 'pnl' && (
         <Section title="ចំណេញ-ខាតតាមខែ">
-          {pnl.data.length === 0 ? <Empty>មិនទាន់មានទិន្នន័យ</Empty>
+          {pnl.loading ? <Loading /> : !pnl.data ? null : pnl.data.length === 0 ? <Empty>មិនទាន់មានទិន្នន័យ</Empty>
             : pnl.data.map((m) => (
                 <div className="row" key={m.month}>
                   <div className="grow">
                     <span className="name">{monthName(m.month)}</span>
                     <span className="sub">
-                      ចំណូល ${money(m.revenue)} · ថ្លៃដើម ${money(m.cogs)} · ចំណាយ ${money(m.opex)}
+                      ចំណូល {money(m.revenue)} · ថ្លៃដើម {money(m.cogs)} · ចំណាយ {money(m.opex)}
                     </span>
                   </div>
                   <span className="num" style={{ fontWeight: 700,
                           color: Number(m.net_profit) >= 0 ? 'var(--leaf-dark)' : 'var(--brick)' }}>
-                    {Number(m.net_profit) < 0 ? '−' : ''}${money(Math.abs(m.net_profit))}
+                    {Number(m.net_profit) < 0 ? '−' : ''}{money(Math.abs(m.net_profit))}
                   </span>
                 </div>
               ))}
@@ -113,7 +113,9 @@ export default function Finance() {
       {tab === 'expenses' && (
         <>
           <Section title="កត់ត្រាចំណាយថ្មី">
-            <ExpenseForm categories={cats.data} onDone={() => { exp.reload(); pnl.reload(); }} />
+            {cats.data
+              ? <ExpenseForm categories={cats.data} onDone={() => { exp.reload(); pnl.reload(); }} />
+              : <Loading />}
           </Section>
           <Section title="ចំណាយចុងក្រោយ">
             {exp.loading ? <Loading /> : exp.error ? <Notice tone="error">{exp.error}</Notice>
@@ -124,7 +126,7 @@ export default function Finance() {
                       <span className="name">{e.description || e.category}</span>
                       <span className="sub">{e.category} · {date(e.expense_date)}</span>
                     </div>
-                    <span className="num">${money(e.amount)}</span>
+                    <span className="num">{money(e.amount)}</span>
                   </div>
                 ))}
           </Section>
@@ -134,7 +136,7 @@ export default function Finance() {
       {tab === 'ar' && (
         <>
           <Section title="អតិថិជនជំពាក់យើង"
-                   meta={ar.data ? `$${money(ar.data.receivable_total)}` : ''}>
+                   meta={ar.data ? `${money(ar.data.receivable_total)}` : ''}>
             {ar.loading ? <Loading /> : ar.error ? <Notice tone="error">{ar.error}</Notice>
               : ar.data.receivable.length === 0 ? <Empty>គ្មានអតិថិជនជំពាក់</Empty>
               : ar.data.receivable.map((r) => (
@@ -144,13 +146,13 @@ export default function Finance() {
                       <span className="sub">{r.order_no} · {date(r.order_date)}</span>
                     </div>
                     <span className="num" style={{ color: 'var(--brick)', fontWeight: 600 }}>
-                      ${money(r.outstanding)}
+                      {money(r.outstanding)}
                     </span>
                   </div>
                 ))}
           </Section>
           <Section title="យើងជំពាក់អ្នកផ្គត់ផ្គង់"
-                   meta={ar.data ? `$${money(ar.data.payable_total)}` : ''}>
+                   meta={ar.data ? `${money(ar.data.payable_total)}` : ''}>
             {ar.data && (ar.data.payable.length === 0 ? <Empty>គ្មានបំណុល</Empty>
               : ar.data.payable.map((r) => (
                   <div className="row" key={r.id}>
@@ -158,7 +160,7 @@ export default function Finance() {
                       <span className="name">{r.supplier_name}</span>
                       <span className="sub">{r.purchase_no} · {date(r.purchase_date)}</span>
                     </div>
-                    <span className="num" style={{ fontWeight: 600 }}>${money(r.outstanding)}</span>
+                    <span className="num" style={{ fontWeight: 600 }}>{money(r.outstanding)}</span>
                   </div>
                 )))}
           </Section>
@@ -176,11 +178,11 @@ export default function Finance() {
                   <div className="grow">
                     <span className="name">{a.name_km}</span>
                     <span className="sub">
-                      ទិញ ${money(a.purchase_cost)} · {a.useful_life_months} ខែ ·
-                      តម្លៃសៀវភៅ ${money(a.book_value)}
+                      ទិញ {money(a.purchase_cost)} · {a.useful_life_months} ខែ ·
+                      តម្លៃសៀវភៅ {money(a.book_value)}
                     </span>
                   </div>
-                  <span className="num">${money(a.monthly_depreciation)}/ខែ</span>
+                  <span className="num">{money(a.monthly_depreciation)}/ខែ</span>
                 </div>
               ))}
         </Section>

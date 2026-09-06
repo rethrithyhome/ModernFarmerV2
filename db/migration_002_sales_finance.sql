@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 
 INSERT INTO settings (key, value, note_km) VALUES
-  ('currency', '"USD"', 'រូបិយប័ណ្ណប្រើក្នុងប្រព័ន្ធ'),
-  ('loyalty_amount_per_point', '10', 'ចំណាយប៉ុន្មាន ដើម្បីបាន ១ ពិន្ទុ'),
-  ('loyalty_point_value', '0.1', 'តម្លៃ ១ ពិន្ទុ ពេលដូរជាការបញ្ចុះតម្លៃ'),
+  ('currency', '"KHR"', 'រូបិយប័ណ្ណប្រើក្នុងប្រព័ន្ធ (KHR ឬ USD)'),
+  ('loyalty_amount_per_point', '40000', 'ចំណាយប៉ុន្មាន ដើម្បីបាន ១ ពិន្ទុ'),
+  ('loyalty_point_value', '400', 'តម្លៃ ១ ពិន្ទុ ពេលដូរជាការបញ្ចុះតម្លៃ'),
   ('low_stock_alert_hour', '7', 'ម៉ោងផ្ញើសារជូនដំណឹងស្តុកទាប')
 ON CONFLICT (key) DO NOTHING;
 

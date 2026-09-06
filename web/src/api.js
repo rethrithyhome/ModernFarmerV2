@@ -1,4 +1,5 @@
 import { enqueue } from './offline';
+import { clearCache } from './cache';
 
 const TOKEN_KEY = 'mf_token';
 const USER_KEY = 'mf_user';
@@ -51,8 +52,10 @@ async function request(method, path, body, idempotencyKey) {
 
 export const api = {
   get: (p) => request('GET', p),
-  post: (p, b) => request('POST', p, b),
-  patch: (p, b) => request('PATCH', p, b),
+
+  // ក្រោយសរសេរទិន្នន័យ លុបឃ្លាំង ដើម្បីកុំឱ្យទំព័របង្ហាញលេខចាស់
+  post: async (p, b) => { const r = await request('POST', p, b); clearCache(); return r; },
+  patch: async (p, b) => { const r = await request('PATCH', p, b); clearCache(); return r; },
 
   /**
    * សំណើដែលអាចរង់ចាំបាន — ប្រើសម្រាប់ការកត់ត្រានៅរោងចក្រ។
@@ -62,22 +65,22 @@ export const api = {
   async send(path, body, label) {
     if (navigator.onLine) {
       try {
-        return await request('POST', path, body);
+        const r = await request('POST', path, body);
+        clearCache();
+        return r;
       } catch (e) {
         // តែកំហុសបណ្តាញទេដែលចូលជួរ — ការបដិសេធតាមវិធានអាជីវកម្មបោះចេញ
         if (e.status !== 0) throw e;
       }
     }
     await enqueue({ method: 'POST', path, body, label });
+    clearCache();
     return { queued: true };
   },
 };
 
-/** ទម្រង់លុយ */
-export function money(n) {
-  const v = Number(n || 0);
-  return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+// រូបិយប័ណ្ណនៅក្នុង currency.js — នាំចេញបន្តដើម្បីភាពងាយស្រួល
+export { money, setCurrency, getCurrency, currencyLabel, moneyStep } from './currency';
 
 /** ទម្រង់បរិមាណ — បង្ហាញតោនពេលលេខធំ ដើម្បីអានស្រួល */
 export function kg(n) {

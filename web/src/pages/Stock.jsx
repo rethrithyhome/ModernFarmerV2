@@ -80,7 +80,7 @@ export default function Stock() {
   const [tab, setTab] = useState('raw');
   const raw = useData('/inventory/raw');
   const fin = useData('/inventory/finished');
-  const mov = useData('/inventory/movements?limit=40');
+  const mov = useData('/inventory/movements?limit=40', { enabled: tab === 'moves' });
 
   if (raw.loading || fin.loading) return <Loading />;
   const err = raw.error || fin.error;
@@ -138,7 +138,7 @@ export default function Stock() {
       {tab === 'moves' && (
         <Section title="ចលនាស្តុកចុងក្រោយ">
           {mov.loading ? <Loading /> : mov.error ? <Notice tone="error">{mov.error}</Notice>
-            : mov.data.length === 0 ? <Empty>មិនទាន់មានចលនា</Empty>
+            : !mov.data ? null : mov.data.length === 0 ? <Empty>មិនទាន់មានចលនា</Empty>
             : mov.data.map((m) => {
                 const positive = Number(m.qty_change) > 0;
                 const reasons = {

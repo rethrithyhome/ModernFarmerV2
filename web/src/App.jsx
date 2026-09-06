@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
-import { store } from './api';
+import { store, api, setCurrency } from './api';
 import QueueBanner from './QueueBanner';
 
 import Login from './pages/Login';
@@ -16,6 +16,8 @@ import Customers from './pages/Customers';
 import Finance from './pages/Finance';
 import More from './pages/More';
 import Settings from './pages/Settings';
+import Users from './pages/Users';
+import Profile from './pages/Profile';
 
 const AuthCtx = createContext(null);
 export const useAuth = () => useContext(AuthCtx);
@@ -71,6 +73,16 @@ function Shell({ children }) {
   const { user, logout } = useAuth();
   const [online, setOnline] = useState(navigator.onLine);
 
+  // ធ្វើសមកាលកម្មរូបិយប័ណ្ណជាមួយម៉ាស៊ីនមេ (រក្សាទុកក្នុងឧបករណ៍ ដូច្នេះបើកលើកក្រោយឃើញភ្លាម)
+  useEffect(() => {
+    api.get('/catalog/settings')
+      .then((rows) => {
+        const c = rows.find((r) => r.key === 'currency')?.value;
+        if (c) setCurrency(c);
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     const on = () => setOnline(true);
     const off = () => setOnline(false);
@@ -87,9 +99,12 @@ function Shell({ children }) {
   return (
     <div className="app">
       <div className="topbar">
-        <div>
-          <h1>កសិករទំនើប</h1>
-          <div className="who">{user.name}</div>
+        <div className="brand">
+          <img src="/logo-mark-white.png" alt="" aria-hidden="true" />
+          <div>
+            <h1>កសិករទំនើប</h1>
+            <div className="who">{user.name}</div>
+          </div>
         </div>
         <button onClick={logout}>ចាកចេញ</button>
       </div>
@@ -142,6 +157,8 @@ function Routed() {
       <Route path="/customers" element={<Guard area="customers"><Customers /></Guard>} />
       <Route path="/finance" element={<Guard area="finance"><Finance /></Guard>} />
       <Route path="/settings" element={<Guard area="settings"><Settings /></Guard>} />
+      <Route path="/users" element={<Guard area="users"><Users /></Guard>} />
+      <Route path="/profile" element={<Guard><Profile /></Guard>} />
       <Route path="/more" element={<Guard><More /></Guard>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

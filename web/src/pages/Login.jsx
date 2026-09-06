@@ -27,7 +27,7 @@ export default function Login() {
   return (
     <div className="login">
       <form onSubmit={submit}>
-        <div className="mark">កសិករទំនើប</div>
+        <img className="login-logo" src="/logo.png" alt="កសិករទំនើប" />
         <p className="tagline">ប្រព័ន្ធគ្រប់គ្រងផលិតកម្ម និងការលក់</p>
 
         <Notice tone="error">{error}</Notice>

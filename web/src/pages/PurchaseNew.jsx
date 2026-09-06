@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData, Section, Loading, Notice, Field } from '../ui';
-import { api, money, kg } from '../api';
+import { api, money, kg, currencyLabel } from '../api';
 
 const blank = { raw_material_id: '', qty_input: '', unit_code: 'kg', unit_price_kg: '' };
 
@@ -101,7 +101,7 @@ export default function PurchaseNew() {
                     ))}
                   </select>
                 </Field>
-                <Field label="តម្លៃ/គីឡូ">
+                <Field label={`តម្លៃ/គីឡូ (${currencyLabel()})`}>
                   <input type="number" step="any" min="0" value={it.unit_price_kg} required
                          onChange={(e) => setItem(i, { unit_price_kg: e.target.value })} />
                 </Field>
@@ -109,7 +109,7 @@ export default function PurchaseNew() {
               <div style={{ display: 'flex', justifyContent: 'space-between',
                             fontSize: '0.85rem', color: 'var(--ink-2)' }}>
                 <span>= {kg(lineKg(it))} ក្នុងស្តុក</span>
-                <span className="num">${money(lineTotal(it))}</span>
+                <span className="num">{money(lineTotal(it))}</span>
               </div>
               {items.length > 1 && (
                 <button type="button" className="btn small ghost"
@@ -132,7 +132,7 @@ export default function PurchaseNew() {
 
       <div className="row" style={{ borderTop: '2px solid var(--line-strong)', borderBottom: 0 }}>
         <div className="grow"><strong>សរុប</strong></div>
-        <span className="num" style={{ fontWeight: 700, fontSize: '1.1rem' }}>${money(total)}</span>
+        <span className="num" style={{ fontWeight: 700, fontSize: '1.1rem' }}>{money(total)}</span>
       </div>
 
       <p className="notice info">

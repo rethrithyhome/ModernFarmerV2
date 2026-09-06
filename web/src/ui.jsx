@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { api } from './api';
+import { getCached, setCached, isFresh } from './cache';
 
 export function Section({ title, meta, children, action }) {
   return (
@@ -35,25 +36,68 @@ export function Field({ label, children }) {
   );
 }
 
-/** ទាញទិន្នន័យ + ស្ថានភាពកំពុងផ្ទុក/កំហុស ក្នុងកន្លែងតែមួយ */
-export function useData(path, deps = []) {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  const reload = useCallback(() => {
-    setLoading(true);
-    setError('');
-    api.get(path)
-      .then(setData)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, [path]);
-
-  useEffect(reload, [reload, ...deps]);
-  return { data, error, loading, reload, setData };
-}
-
 export function Loading() {
   return <p className="empty">កំពុងផ្ទុក…</p>;
+}
+
+/**
+ * ទាញទិន្នន័យ + ស្ថានភាពកំពុងផ្ទុក/កំហុស
+ *
+ * options:
+ *   enabled — កំណត់ជា false ដើម្បីកុំឱ្យទាញ (ឧ. ផ្ទាំងដែលមិនទាន់បើក)
+ *
+ * បើមានច្បាប់ចម្លងក្នុងឃ្លាំង វាបង្ហាញភ្លាមដោយគ្មាន «កំពុងផ្ទុក…»
+ * ហើយទាញថ្មីនៅខាងក្រោយបើទិន្នន័យចាស់ជាង ៣០ វិនាទី។
+ */
+export function useData(path, options = {}) {
+  const { enabled = true } = options;
+
+  const cached = enabled ? getCached(path) : null;
+  const [data, setData] = useState(cached ? cached.data : null);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(enabled && !cached);
+
+  // ការពារកុំឱ្យចម្លើយចាស់មកសរសេរជាន់លើ ពេលប្តូរទំព័រលឿន
+  const reqId = useRef(0);
+
+  const fetchNow = useCallback(
+    (showSpinner) => {
+      if (!enabled) return;
+      const id = ++reqId.current;
+      if (showSpinner) setLoading(true);
+      setError('');
+
+      api.get(path)
+        .then((d) => {
+          if (id !== reqId.current) return;
+          setCached(path, d);
+          setData(d);
+        })
+        .catch((e) => {
+          if (id !== reqId.current) return;
+          setError(e.message);
+        })
+        .finally(() => {
+          if (id === reqId.current) setLoading(false);
+        });
+    },
+    [path, enabled]
+  );
+
+  useEffect(() => {
+    if (!enabled) return;
+    const entry = getCached(path);
+
+    if (entry) {
+      setData(entry.data);
+      setLoading(false);
+      if (!isFresh(entry)) fetchNow(false);
+    } else {
+      fetchNow(true);
+    }
+  }, [path, enabled, fetchNow]);
+
+  const reload = useCallback(() => fetchNow(false), [fetchNow]);
+
+  return { data, error, loading, reload, setData };
 }

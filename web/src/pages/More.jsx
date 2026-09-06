@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useAuth, can } from '../App';
 import { Section } from '../ui';
 
+const APP_VERSION = '2.7';
+
 export default function More() {
   const { user } = useAuth();
   const links = [
@@ -12,6 +14,7 @@ export default function More() {
     ['/stock', 'ស្តុក', 'វត្ថុធាតុដើម និងផលិតផលសម្រេច', 'stock'],
     ['/finance', 'ហិរញ្ញវត្ថុ', 'ចំណាយ រំលស់ និងចំណេញ-ខាត', 'finance'],
     ['/settings', 'ការកំណត់', 'ផលិតផល វេចខ្ចប់ វត្ថុធាតុដើម', 'settings'],
+    ['/users', 'គណនីបុគ្គលិក', 'បង្កើត បិទ និងកំណត់ពាក្យសម្ងាត់', 'users'],
   ].filter(([, , , area]) => can(user.role, area));
 
   const roleName = { admin: 'អ្នកគ្រប់គ្រង', stock: 'អ្នកគ្រប់គ្រងស្តុក',
@@ -29,6 +32,28 @@ export default function More() {
             <span aria-hidden="true">›</span>
           </Link>
         ))}
+      </Section>
+
+      <Section title="អំពីកម្មវិធី">
+        <div className="row">
+          <div className="grow">
+            <span className="name">កំណែ</span>
+            <span className="sub">
+              បើលេខនេះមិនប្តូរក្រោយដាក់កំណែថ្មី សូមបិទកម្មវិធីទាំងស្រុងរួចបើកវិញ
+            </span>
+          </div>
+          <span className="num">{APP_VERSION}</span>
+        </div>
+      </Section>
+
+      <Section title="គណនីរបស់ខ្ញុំ">
+        <Link className="row" to="/profile">
+          <div className="grow">
+            <span className="name">ប្តូរពាក្យសម្ងាត់</span>
+            <span className="sub">{user.name}</span>
+          </div>
+          <span aria-hidden="true">›</span>
+        </Link>
       </Section>
     </>
   );

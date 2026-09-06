@@ -14,9 +14,9 @@ export default function Dashboard() {
     <>
       <section className="section">
         <div className="big-label">ចំណូលថ្ងៃនេះ</div>
-        <div className="big num" style={{ textAlign: 'left' }}>${money(data.today.revenue)}</div>
+        <div className="big num" style={{ textAlign: 'left' }}>{money(data.today.revenue)}</div>
         <div className="meta" style={{ color: 'var(--ink-2)', fontSize: '0.85rem' }}>
-          {data.today.orders} វិក្កយបត្រ · ខែនេះ ${money(data.this_month.revenue)} ពី {data.this_month.orders} វិក្កយបត្រ
+          {data.today.orders} វិក្កយបត្រ · ខែនេះ {money(data.this_month.revenue)} ពី {data.this_month.orders} វិក្កយបត្រ
         </div>
       </section>
 
@@ -77,7 +77,7 @@ export default function Dashboard() {
         <Section title="អតិថិជនជំពាក់">
           <div className="row">
             <div className="grow"><span className="name">សរុបនៅជំពាក់</span></div>
-            <span className="num" style={{ fontWeight: 600 }}>${money(data.receivable_total)}</span>
+            <span className="num" style={{ fontWeight: 600 }}>{money(data.receivable_total)}</span>
           </div>
         </Section>
       )}

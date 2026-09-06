@@ -102,7 +102,7 @@ export default function Customers() {
                   )}
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div className="num" style={{ fontWeight: 600 }}>${money(c.lifetime_value)}</div>
+                  <div className="num" style={{ fontWeight: 600 }}>{money(c.lifetime_value)}</div>
                   <div className="sub num" style={{ fontSize: '0.8rem', color: 'var(--ink-2)' }}>
                     {c.order_count} វិក្កយបត្រ
                   </div>

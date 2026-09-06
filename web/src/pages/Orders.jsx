@@ -27,7 +27,7 @@ export default function Orders() {
                   )}
                 </div>
               </div>
-              <span className="num" style={{ fontWeight: 600 }}>${money(o.total)}</span>
+              <span className="num" style={{ fontWeight: 600 }}>{money(o.total)}</span>
             </Link>
           ))}
     </Section>

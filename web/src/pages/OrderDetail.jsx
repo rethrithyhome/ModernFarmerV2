@@ -57,35 +57,35 @@ export default function OrderDetail() {
             <div className="grow">
               <span className="name">{it.name_km}</span>
               <span className="sub">
-                {it.qty_units} កញ្ចប់ × ${money(it.unit_price)}
+                {it.qty_units} កញ្ចប់ × {money(it.unit_price)}
               </span>
             </div>
-            <span className="num">${money(it.line_total)}</span>
+            <span className="num">{money(it.line_total)}</span>
           </div>
         ))}
 
         <div className="row">
           <div className="grow"><span className="sub">សរុបរង</span></div>
-          <span className="num">${money(data.subtotal)}</span>
+          <span className="num">{money(data.subtotal)}</span>
         </div>
         {Number(data.discount) > 0 && (
           <div className="row">
             <div className="grow"><span className="sub">បញ្ចុះតម្លៃ</span></div>
-            <span className="num">−${money(data.discount)}</span>
+            <span className="num">−{money(data.discount)}</span>
           </div>
         )}
         <div className="row" style={{ borderTop: '2px solid var(--line-strong)' }}>
           <div className="grow"><strong>សរុប</strong></div>
-          <span className="num" style={{ fontWeight: 700 }}>${money(data.total)}</span>
+          <span className="num" style={{ fontWeight: 700 }}>{money(data.total)}</span>
         </div>
         {data.status === 'confirmed' && (
           <div className="row" style={{ borderBottom: 0 }}>
             <div className="grow">
-              <span className="sub">បង់រួច ${money(data.paid_amount)}</span>
+              <span className="sub">បង់រួច {money(data.paid_amount)}</span>
             </div>
             <span className="num" style={{ fontWeight: 600,
                     color: remaining > 0 ? 'var(--brick)' : 'var(--leaf-dark)' }}>
-              នៅសល់ ${money(remaining)}
+              នៅសល់ {money(remaining)}
             </span>
           </div>
         )}
@@ -105,7 +105,7 @@ export default function OrderDetail() {
 
       {data.status === 'confirmed' && remaining > 0 && (
         <Section title="កត់ត្រាការទូទាត់">
-          <Field label={`ចំនួនទឹកប្រាក់ (នៅសល់ $${money(remaining)})`}>
+          <Field label={`ចំនួនទឹកប្រាក់ (នៅសល់ ${money(remaining)})`}>
             <input type="number" step="any" min="0" max={remaining} value={amount}
                    onChange={(e) => setAmount(e.target.value)} />
           </Field>
@@ -118,7 +118,7 @@ export default function OrderDetail() {
             <button className="btn ghost" disabled={busy}
                     onClick={() => act(() => api.post(`/orders/${id}/payments`,
                       { amount: remaining }), 'បង់ពេញរួចរាល់')}>
-              បង់ពេញ ${money(remaining)}
+              បង់ពេញ {money(remaining)}
             </button>
           </div>
         </Section>
@@ -129,7 +129,7 @@ export default function OrderDetail() {
           {data.payments.map((p, i) => (
             <div className="row" key={i}>
               <div className="grow"><span className="sub">{date(p.paid_at)} · {p.method}</span></div>
-              <span className="num">${money(p.amount)}</span>
+              <span className="num">{money(p.amount)}</span>
             </div>
           ))}
         </Section>

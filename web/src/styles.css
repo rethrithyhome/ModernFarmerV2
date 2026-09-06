@@ -13,9 +13,9 @@
   --line: #e4dccc;
   --line-strong: #cbbfa8;
 
-  --leaf: #3a6b4a;
-  --leaf-dark: #2c5138;
-  --leaf-wash: #eef3ee;
+  --leaf: #0a9449;
+  --leaf-dark: #07682f;
+  --leaf-wash: #e8f4ec;
 
   --brick: #9e3b26;
   --brick-wash: #fbeeea;
@@ -341,3 +341,64 @@ input:focus, select:focus, textarea:focus {
 .queue-item.failed .queue-state { color: var(--brick); }
 .queue-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
 .queue-note { margin: 0.6rem 0 0; font-size: 0.8rem; color: var(--ink-2); }
+
+/* ---------- ឡូហ្គោ ---------- */
+.topbar .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.topbar .brand img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.login-logo {
+  display: block;
+  width: 168px;
+  max-width: 60%;
+  height: auto;
+  margin: 0 auto 0.75rem;
+}
+.login .tagline { text-align: center; }
+
+/* ---------- កែលេខតាមជួរ ---------- */
+.num-edit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  background: none;
+  border: 0;
+  border-bottom: 1px dashed var(--line-strong);
+  padding: 0.1rem 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.num-edit:active { background: var(--leaf-wash); }
+.num-edit .pencil {
+  font-size: 0.7rem;
+  color: var(--leaf-dark);
+  font-weight: 500;
+}
+.num-editing {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.num-editing input {
+  width: 6.5rem;
+  min-height: 38px;
+  text-align: right;
+}
+.num-err {
+  width: 100%;
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--brick);
+}

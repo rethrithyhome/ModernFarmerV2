@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData, Section, Loading, Notice, Field } from '../ui';
-import { api, money } from '../api';
+import { api, money, currencyLabel } from '../api';
 
 export default function OrderNew() {
   const nav = useNavigate();
@@ -86,7 +86,7 @@ export default function OrderNew() {
                   <input type="number" min="1" value={it.qty_units} required
                          onChange={(e) => setItem(i, { qty_units: e.target.value })} />
                 </Field>
-                <Field label="តម្លៃ/កញ្ចប់">
+                <Field label={`តម្លៃ/កញ្ចប់ (${currencyLabel()})`}>
                   <input type="number" step="any" min="0" value={it.unit_price}
                          placeholder={it.product_variant_id ? money(priceOf(it.product_variant_id)) : ''}
                          onChange={(e) => setItem(i, { unit_price: e.target.value })} />
@@ -99,7 +99,7 @@ export default function OrderNew() {
                     ? `លើសស្តុក — មានតែ ${availableOf(it.product_variant_id)} កញ្ចប់`
                     : 'ទុកតម្លៃទទេ ដើម្បីប្រើតម្លៃស្តង់ដារ'}
                 </span>
-                <span className="num">${money(lineTotal(it))}</span>
+                <span className="num">{money(lineTotal(it))}</span>
               </div>
               {items.length > 1 && (
                 <button type="button" className="btn small ghost" style={{ marginTop: '0.4rem' }}
@@ -118,14 +118,14 @@ export default function OrderNew() {
         </div>
       </Section>
 
-      <Field label="បញ្ចុះតម្លៃ ($)">
+      <Field label={`បញ្ចុះតម្លៃ (${currencyLabel()})`}>
         <input type="number" step="any" min="0" value={discount}
                onChange={(e) => setDiscount(e.target.value)} />
       </Field>
 
       <div className="row" style={{ borderTop: '2px solid var(--line-strong)', borderBottom: 0 }}>
         <div className="grow"><strong>អតិថិជនត្រូវបង់</strong></div>
-        <span className="num" style={{ fontWeight: 700, fontSize: '1.1rem' }}>${money(total)}</span>
+        <span className="num" style={{ fontWeight: 700, fontSize: '1.1rem' }}>{money(total)}</span>
       </div>
 
       {over.length > 0 && (

@@ -52,7 +52,7 @@ export default function Purchases() {
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div className="num" style={{ fontWeight: 600 }}>${money(p.total_amount)}</div>
+                  <div className="num" style={{ fontWeight: 600 }}>{money(p.total_amount)}</div>
                   {p.status === 'draft' && (
                     <button className="btn small" disabled={busy === p.id}
                             style={{ marginTop: '0.35rem' }}
