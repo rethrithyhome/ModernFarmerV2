@@ -1,0 +1,343 @@
+/* ============================================================
+   កសិករទំនើប — ប្រព័ន្ធរចនា
+   គំនិត: សៀវភៅកត់ត្រារបស់រោងចក្រ — បន្ទាត់ស្តើង លេខតម្រឹមស្តាំ
+   មិនប្រើស្រមោល/កាតមូល ព្រោះឧបករណ៍ការងារត្រូវអានបានច្បាស់ក្រោមពន្លឺថ្ងៃ
+   ============================================================ */
+
+:root {
+  --ink: #241e17;
+  --ink-2: #6b6053;
+  --ink-3: #9a9083;
+  --paper: #fbf9f4;
+  --surface: #ffffff;
+  --line: #e4dccc;
+  --line-strong: #cbbfa8;
+
+  --leaf: #3a6b4a;
+  --leaf-dark: #2c5138;
+  --leaf-wash: #eef3ee;
+
+  --brick: #9e3b26;
+  --brick-wash: #fbeeea;
+  --turmeric: #96690f;
+  --turmeric-wash: #fbf3e0;
+
+  --tap: 46px;
+  --r: 4px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Kantumruy Pro', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* លេខតម្រឹមជួរ — សំខាន់សម្រាប់អានតួលេខលឿន */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+  text-align: right;
+  white-space: nowrap;
+}
+
+h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.4; }
+h1 { font-size: 1.25rem; }
+h2 { font-size: 1.05rem; }
+h3 { font-size: 0.95rem; }
+p { margin: 0 0 0.75rem; }
+
+a { color: var(--leaf-dark); }
+
+:focus-visible {
+  outline: 2px solid var(--leaf);
+  outline-offset: 2px;
+}
+
+/* ---------- ស្គ្រីនទូទៅ ---------- */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--leaf-dark);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: max(0.6rem, env(safe-area-inset-top));
+}
+.topbar h1 { font-size: 1rem; font-weight: 600; }
+.topbar .who { font-size: 0.8rem; opacity: 0.85; }
+.topbar button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  border-radius: var(--r);
+  padding: 0.3rem 0.7rem;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+main {
+  flex: 1;
+  padding: 1rem 1rem 5.5rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ---------- របារនាំផ្លូវខាងក្រោម (ងាយចុចដោយមេដៃ) ---------- */
+.tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--line-strong);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs a {
+  flex: 1;
+  min-height: var(--tap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0.4rem 0.2rem;
+  font-size: 0.7rem;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-top: 2px solid transparent;
+}
+.tabs a.on {
+  color: var(--leaf-dark);
+  border-top-color: var(--leaf-dark);
+  font-weight: 600;
+}
+.tabs svg { width: 20px; height: 20px; }
+
+/* ---------- ផ្នែក (បន្ទាត់ជំនួសកាត) ---------- */
+.section { margin: 0 0 1.75rem; }
+.section > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--line-strong);
+  margin-bottom: 0.25rem;
+}
+.section > header .meta { font-size: 0.8rem; color: var(--ink-2); }
+
+/* ជួរបែបសៀវភៅកត់ត្រា */
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+}
+.row:last-child { border-bottom: 0; }
+.row .grow { flex: 1; min-width: 0; }
+.row .name { display: block; }
+.row .sub { display: block; font-size: 0.8rem; color: var(--ink-2); }
+a.row:active { background: var(--leaf-wash); }
+
+.big {
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.big-label { font-size: 0.85rem; color: var(--ink-2); }
+
+/* ---------- ស្លាកស្ថានភាព ---------- */
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.1rem 0.45rem;
+  border-radius: 2px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.tag.ok      { color: var(--leaf-dark); border-color: #b9cdbd; background: var(--leaf-wash); }
+.tag.warn    { color: var(--turmeric); border-color: #e0cb98; background: var(--turmeric-wash); }
+.tag.danger  { color: var(--brick); border-color: #e2bcb2; background: var(--brick-wash); }
+.tag.quiet   { color: var(--ink-2); border-color: var(--line-strong); background: transparent; }
+
+/* ---------- ទម្រង់បញ្ចូល ---------- */
+label { display: block; margin-bottom: 0.9rem; }
+label > span { display: block; font-size: 0.85rem; color: var(--ink-2); margin-bottom: 0.25rem; }
+
+input, select, textarea {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.5rem 0.65rem;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r);
+}
+input[type='number'] { font-variant-numeric: tabular-nums; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--leaf);
+  outline: 2px solid var(--leaf-wash);
+  outline-offset: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: var(--tap);
+  padding: 0.5rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid var(--leaf-dark);
+  border-radius: var(--r);
+  background: var(--leaf-dark);
+  color: #fff;
+  cursor: pointer;
+}
+.btn:active { background: var(--leaf); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+.btn.ghost { background: transparent; color: var(--leaf-dark); }
+.btn.danger { background: var(--brick); border-color: var(--brick); }
+.btn.wide { width: 100%; }
+.btn.small { min-height: 36px; padding: 0.25rem 0.7rem; font-size: 0.85rem; }
+
+.actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+
+/* ---------- សារ ---------- */
+.notice {
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid;
+  border-radius: 0 var(--r) var(--r) 0;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+.notice.error { border-color: var(--brick); background: var(--brick-wash); color: var(--brick); }
+.notice.ok { border-color: var(--leaf); background: var(--leaf-wash); color: var(--leaf-dark); }
+.notice.info { border-color: var(--line-strong); background: var(--surface); color: var(--ink-2); }
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+
+.offline {
+  background: var(--turmeric-wash);
+  color: var(--turmeric);
+  text-align: center;
+  font-size: 0.82rem;
+  padding: 0.3rem;
+  border-bottom: 1px solid #e0cb98;
+}
+
+/* ---------- ចូលប្រព័ន្ធ ---------- */
+.login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.login form { width: 100%; max-width: 340px; }
+.login .mark {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+.login .tagline { color: var(--ink-2); font-size: 0.9rem; margin-bottom: 1.75rem; }
+
+/* ---------- តារាងធាតុ ---------- */
+.items { margin: 0.5rem 0 1rem; }
+.item-line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.item-line .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.item-line label { margin: 0; }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+@media (min-width: 720px) {
+  main { padding: 1.5rem 1.5rem 5.5rem; }
+  .big { font-size: 3.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ---------- ជួរសំណើរង់ចាំ ---------- */
+.queue {
+  border-bottom: 1px solid #e0cb98;
+  background: var(--turmeric-wash);
+  color: var(--turmeric);
+}
+.queue.has-failed {
+  background: var(--brick-wash);
+  border-color: #e2bcb2;
+  color: var(--brick);
+}
+.queue-head {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 1rem;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: inherit;
+  cursor: pointer;
+}
+.queue-body {
+  padding: 0 1rem 0.75rem;
+  font-size: 0.85rem;
+}
+.queue-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.queue-state { color: var(--ink-2); text-align: right; }
+.queue-item.failed .queue-state { color: var(--brick); }
+.queue-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.6rem; }
+.queue-note { margin: 0.6rem 0 0; font-size: 0.8rem; color: var(--ink-2); }

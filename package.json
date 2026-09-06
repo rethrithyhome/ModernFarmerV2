@@ -1,35 +1,22 @@
 {
-  "name": "modern-farmer-compost",
-  "private": true,
-  "version": "1.0.0",
+  "name": "modern-farmer-api",
+  "version": "0.1.0",
+  "description": "កសិករទំនើប — Business Management API",
   "type": "module",
-  "description": "កសិករទំនើប — compost production, QC, customers and cost tracking (Vite SPA + Supabase)",
-  "engines": {
-    "node": ">=20"
-  },
+  "main": "src/server.js",
   "scripts": {
-    "dev": "vite --host 0.0.0.0 --port 3000",
-    "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0 --port 3000",
-    "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "check:types": "tsc --noEmit",
-    "gen:sql": "node scripts/gen-sql.mjs",
-    "check:sql": "node scripts/gen-sql.mjs --check",
-    "db:local": "node scripts/fake-postgrest.mjs",
-    "sync:import": "node scripts/import-json.mjs"
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node scripts/seed.js migrate",
+    "seed": "node scripts/seed.js seed"
   },
   "dependencies": {
-    "qrcode": "^1.5.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
-  },
-  "devDependencies": {
-    "@types/qrcode": "^1.5.6",
-    "@types/react": "^18.3.31",
-    "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react": "^5.2.0",
-    "typescript": "^5.8.3",
-    "vite": "^7.3.6"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0",
+    "zod": "^3.23.8"
   }
 }

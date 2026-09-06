@@ -1,67 +1,314 @@
-# កសិករទំនើប · Modern Farmer — ប្រព័ន្ធគ្រប់គ្រងផលិតកម្មជីកំប៉ុស្តិ៍
+# កសិករទំនើប — ប្រព័ន្ធគ្រប់គ្រងអាជីវកម្ម
 
-Vite + React + TypeScript ។ រក្សាទុកទិន្នន័យក្នុង browser (ដំណើរការភ្លាម គ្មាន backend)
-ហើយ **អាច** ភ្ជាប់ Supabase (Postgres) ដើម្បីឱ្យគ្រប់ទូរស័ព្ទ/កុំព្យូទ័រឃើញទិន្នន័យតែមួយ។
+**ដំណាក់កាល ១** — Auth/Roles · ទិញវត្ថុធាតុដើម · ផលិត/លាយ · ស្តុក ✅
+**ដំណាក់កាល ២** — លក់ & CRM · ហិរញ្ញវត្ថុ · របាយការណ៍ ✅
+**ដំណាក់កាល ៤** — Frontend React (ភាសាខ្មែរ) · PWA · ការកត់ត្រាពេលបណ្តាញដាច់ ✅
 
-## មុខងារ
+Backend: **Node.js + Express + PostgreSQL** · Frontend: **React + Vite**
 
-| ផ្ទាំង | អ្វីដែលធ្វើបាន |
-|---|---|
-| ផ្ទាំងសង្ខេប | ថ្លៃដើមពិត/គ.ក · ទិនន្ទ័ផលខែ · ដំនៅការផែនការ · សល់ជំពាក់ · ផែជារបៀង |
-| ស្តុកវត្ថុធាតុ | ទិញចូល · រាប់ស្តុក · ប្រវត្តិចលនា (ស្តុកគណនាពីចលនាជានិច្ច) |
-| រូបមន្ត | BOM · C:N · NPK រូបមន្ត · ដែនកំណត់ QC · ថ្លៃដើម/Lot |
-| Lot ផលិតកម្ម | បើក Lot (កាត់ស្តុក) · បន្ថែមវត្ថុធាតុកណ្តាលផ្កាម · កំណត់សង្កេត (កំដៅ/សំណើម/pH/ការកូរ) · ផ្អាក/បដិសេធ/បញ្ចប់ |
-| ស្លាក QR | ជ្រើស Lot → បោះពុម្ពស្លាក (QR បើកទំព័រLot នោះ) |
-| គម្រោងប្រចាំខែ | គោលដៅ គ.ក · បញ្ចប់ + រំពឹង vs គោលដៅ · **បញ្ជីទិញវត្ថុធាតុ + ថវិកា** · ចំណាយរួមរោងចក្រ |
-| គុណភាព | តេស្តកណ្តាល/ចុងក្រោយ · វិនិច្ឆ័យជាប់-ចាញ់ស្វ័យប្រវត្តិ · ថ្នាក់ A/B/C |
-| អតិថិជន | សៀវភៅអតិថិជន · ប្រវត្តិទិញ · វិក្កយបត្រ · ការបង់ប្រាក់ · អាយុជំពាក់ |
-| ផលិតផល | ថ្លៃ A/B/C · បញ្ចេញលក់ភ្ជាប់ Lot · វិក្កយបត្របោះពុម្ព · របាយការណ៍ |
-| របាយការណ៍ | ថ្លៃដើមតាមLot (ផ្ទាល់ + បែងចែកចំណាយរួម) · ខែៗ · គម្រោង vs ជាក់ស្តែង · បំណុលអតិថិជន · បោះពុម្ព/PDF |
+📘 ការដំឡើងលម្អិតជាជំហានៗ — ៣ ជម្រើស (កុំព្យូទ័រខ្លួនឯង · VPS · **Supabase + Vercel ដោយគ្មាន command line**): **[DEPLOY.md](DEPLOY.md)**
 
-## ដំណើរការភ្លាម (គ្មាន Supabase)
+---
+
+## ១. ដំឡើង
 
 ```bash
+# ១. ដំឡើង dependencies
 npm install
-npm run dev        # http://localhost:3000
+
+# ២. រៀបចំ .env
+cp .env.example .env
+# បើក .env ហើយកែ DATABASE_URL និង JWT_SECRET
+
+# ៣. បង្កើត database (ធ្វើម្តងគត់)
+createdb modern_farmer
+
+# ៤. បង្កើតតារាងទាំងអស់
+npm run migrate
+
+# ៥. បញ្ចូលទិន្នន័យដំបូង (ឯកតា · ផលិតផល · វេចខ្ចប់ · គណនី admin)
+npm run seed
+
+# ៦. Build ផ្ទាំងប្រើប្រាស់ (frontend)
+cd web && npm install && npm run build && cd ..
+
+# ៧. ចាប់ផ្តើម — ម៉ាស៊ីនមេតែមួយបម្រើទាំង API និងផ្ទាំង
+npm start
 ```
 
-## ភ្ជាប់ Supabase ខ្លីៗ
+បើកកម្មវិធីនៅ `http://localhost:3000` រួចចូលដោយគណនី admin។
 
-1. បង្កើត project លើ [supabase.com](https://supabase.com) រួច SQL editor → ដាក់ខ្លឹមសារ
-   `supabase/schema.sql` ទាំងអស់ → Run។
-2. ក្នុង app: **ទិនន្ទ័យ/ការកំនត់ → Sync ជាមួយ Supabase** → បញ្ចូល *Project URL* +
-   *anon key* + *Workspace id* (ដូចក្នុង schema.sql, លំនាំដើម `plant-01`) → រក្សាទុក ហើយភ្ជាប់។
-3. បើអ្នកមានទិនន្ទ័យចាស់ជា JSON ពី app នេះ ហើយចង់យកចូល Postgres:
-   `npm run sync:import path/to/export.json` → បាន `supabase/import.sql` → run ក្នុង SQL editor។
+**ពេលកែ frontend:** បើកបង្អួចទី ២ រួចរត់ `cd web && npm run dev` — មាន hot reload នៅ port 5173 និងបញ្ជូន `/api` ទៅ port 3000 ស្វ័យប្រវត្តិ។
 
-> ព័ត៌មានពេញលេញ (រួមទាំង Vercel, RLS, សុវត្ថិភាព, ការផ្លាស់ប្តូរតារាង) នៅ
-> [`docs/RUN-Supabase-Vercel-KM.md`](docs/RUN-Supabase-Vercel-KM.md)។
+> ⚠️ ប្តូរពាក្យសម្ងាត់ admin ភ្លាមៗក្រោយចូលលើកដំបូង។ កុំដាក់ `.env` ចូល Git។
 
-## Scripts
+---
 
-| ពាក្យបញ្ជា | អត្ថន័យ |
+## ២. ចំណុចដែលបានដោះស្រាយពីប្រព័ន្ធចាស់
+
+| បញ្ហាចាស់ (Google Sheets) | ដំណោះស្រាយក្នុងប្រព័ន្ធថ្មី |
 |---|---|
-| `npm run dev` / `build` / `preview` | Vite |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` | ១០ ការពិនិត្យ mapping/diff/schema (Node, គ្មានបណ្តាញ) |
-| `npm run gen:sql` | បង្កើត `supabase/schema.sql` ពី `cloud/schema.json` |
-| `npm run check:sql` | ពិនិត្យថា SQL មិនខុសពី JSON និយមន័យ |
-| `npm run db:local` | Supabase-mock ក្នុងម៉ាស៊ីន (`http://127.0.0.1:54321`) សម្រាប់សាកល្បង sync |
-| `npm run sync:import <file.json>` | export JSON → `supabase/import.sql` |
+| ឯកតាតោន/គីឡូច្រឡំគ្នា | Database រក្សាតែ **kg**។ អ្នកប្រើវាយចូលឯកតាណាក៏បាន (តោន/បាវ/គីឡូ) server បម្លែងស្វ័យប្រវត្តិ។ ឯកតាមិនស្គាល់ → បដិសេធភ្លាម មិនទុកឱ្យចូល DB |
+| លេខទូរស័ព្ទ format ខូច | Normalize ស្វ័យប្រវត្តិទៅ `+855XXXXXXXX` + រក្សា format បង្ហាញ `012 345 678`។ លេខខុសត្រូវបដិសេធតាំងពីដំបូង |
+| ការភ្ជាប់ម៉ូឌុលងាយខូច | Foreign keys ពិតប្រាកដ + transaction (ទិញ/ផលិត/លក់ ជោគជ័យទាំងអស់ ឬត្រឡប់ដើមទាំងអស់) |
+| ស្តុកកែផ្ទាល់រហូតខុស | ស្តុកជា **ledger** — គណនាពីចលនាទាំងអស់។ កែតម្រូវ = បន្ថែមចលនាថ្មី មិនលុបចាស់ |
+| សិទ្ធិលាក់ត្រឹម menu | RBAC ពិតប្រាកដនៅកម្រិត API — sales មិនអាចហៅ endpoint របស់ stock បានទេ ទោះដឹង URL |
+| ស្តុកអវិជ្ជមាន | ត្រួតពិនិត្យស្តុកមុនដក — បើមិនគ្រប់គ្រាន់ បដិសេធជាមួយសារខ្មែរច្បាស់លាស់ |
+| មិនដឹងអ្នកណាកែអ្វី | `audit_log` + `inventory_movements` រក្សាប្រវត្តិពេញលេញ |
 
-## រចនាសម្ព័ន្ធ
+---
+
+## ៣. រចនាសម្ព័ន្ធឯកសារ
 
 ```
-cloud/schema.json        ប្រភពតែមួយសម្រាប់ ១១ តារាង + ឈ្មោះជួរដេក (camel ↔ snake_case)
-src/lib/schema.generated.ts   ← បង្កើតដោយ gen-sql.mjs (កុំកែដោយដៃ)
-src/lib/cloud.ts         អាន/សរសេរតារាង + ការកំណត់ Supabase (URL/key/workspace)
-src/lib/syncPlan.ts      diff ពីរ snapshots → upsert/delete + ដំណាក់ mapping
-src/lib/sync.ts          queue + retry + polling + ពេលភ្ជាប់/pull
-supabase/schema.sql      run ក្នុង Supabase SQL editor
-scripts/                 gen-sql · import-json · fake-postgrest (mock Supabase)
-tests/                   node --test mapping/diff/schema-drift
+modern-farmer/
+├── vercel.json            # ការកំណត់ deploy លើ Vercel (build + cron)
+├── api/index.js           # serverless function entry សម្រាប់ Vercel (wrap src/server.js)
+├── db/
+│   ├── schema.sql             # តារាងទាំងអស់ + views
+│   ├── migration_002_sales_finance.sql
+│   ├── migration_003_offline.sql
+│   └── seed.sql               # ទិន្នន័យដំបូង — សម្រាប់ paste ក្នុង Supabase SQL Editor
+├── scripts/seed.js        # migrate + seed (សម្រាប់ VPS/local — ត្រូវការ Node)
+└── src/
+    ├── server.js          # Express app — ដំណើរការទាំង VPS (.listen) និង Vercel (export)
+    ├── config/db.js       # connection pool + withTransaction() + SSL សម្រាប់ Supabase
+    ├── middleware/auth.js       # JWT + RBAC
+    ├── middleware/idempotency.js  # ការពារសំណើស្ទួន (offline queue)
+    ├── utils/units.js     # បម្លែងឯកតា → kg
+    ├── utils/phone.js     # normalize លេខទូរស័ព្ទកម្ពុជា
+    ├── utils/audit.js     # audit log + លេខឯកសារស្វ័យប្រវត្តិ
+    └── routes/
+        ├── auth.js        # login · users
+        ├── catalog.js     # suppliers · materials · products · packaging · SKU
+        ├── purchases.js   # ការទិញ + ចូលស្តុក
+        ├── production.js  # recipes · batches · inputs · packaging runs
+        └── inventory.js   # ស្តុក · ចលនា · កែតម្រូវ
 ```
 
-ការរក្សាទុក៖ រាល់ការកែប្រែមួយ → ចូល `localStorage` ភ្លាម (UI ឆាប់រហ័ស) ហើយបណ្តុំផ្លាស់ប្តូរ
-ត្រូវផ្ញើទៅ Supabase ក្នុងផ្ទៃខាងក្រោយ (~0.7s debounce, retry ពេលបណ្តាញខូច)។ ដូច្នេះ app
-នៅប្រើបានពេលអិនធឺណិតដាច់ ហើយបន្ត sync ខ្លួនឯង។
+---
+
+## ៤. API សំខាន់ៗ
+
+គ្រប់ endpoint (លើកលែង `/api/health` និង `/api/auth/login`) ត្រូវការ header:
+`Authorization: Bearer <token>`
+
+### Auth
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| POST | `/api/auth/login` | សាធារណៈ |
+| GET | `/api/auth/me` | គ្រប់គ្នា |
+| GET/POST | `/api/auth/users` | admin |
+
+### Catalog
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| GET | `/api/catalog/units` | គ្រប់គ្នា |
+| GET/POST | `/api/catalog/suppliers` | មើល: គ្រប់គ្នា · បន្ថែម: stock |
+| GET/POST | `/api/catalog/materials` | មើល: គ្រប់គ្នា · បន្ថែម: stock |
+| GET/POST | `/api/catalog/products` | បន្ថែម: admin |
+| POST | `/api/catalog/variants` | admin (បន្ថែម SKU ថ្មីពេលចេញវេចខ្ចប់ថ្មី) |
+
+### ការទិញ
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| GET | `/api/purchases` | គ្រប់គ្នា |
+| POST | `/api/purchases` | stock |
+| POST | `/api/purchases/:id/confirm` | stock → **ចូលស្តុក** |
+| POST | `/api/purchases/:id/payments` | stock/accountant |
+
+ឧទាហរណ៍ — ទិញលាមកគោ ២ តោន និងអង្កាម ៥០០ គីឡូក្នុងវិក្កយបត្រតែមួយ:
+```json
+POST /api/purchases
+{
+  "supplier_id": 1,
+  "expected_date": "2026-09-10",
+  "items": [
+    { "raw_material_id": 1, "qty_input": 2,   "unit_code": "tonne", "unit_price_kg": 0.15 },
+    { "raw_material_id": 2, "qty_input": 500, "unit_code": "kg",    "unit_price_kg": 0.30 }
+  ]
+}
+```
+→ ស្តុករក្សាទុកជា 2000 kg និង 500 kg ដោយស្វ័យប្រវត្តិ។
+
+### ផលិតកម្ម
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| GET/POST | `/api/production/recipes` | បន្ថែម: admin/stock |
+| GET/POST | `/api/production/batches` | បន្ថែម: stock |
+| POST | `/api/production/batches/:id/inputs` | stock → **ដកស្តុក** |
+| POST | `/api/production/batches/:id/complete` | stock → គណនា yield |
+| POST | `/api/production/batches/:id/packaging` | stock → **បង្កើតស្តុកសម្រេច** |
+
+### ស្តុក
+| Method | Path |
+|---|---|
+| GET | `/api/inventory/raw` · `/finished` · `/low` |
+| GET | `/api/inventory/movements` |
+| POST | `/api/inventory/adjust` (stock — ត្រូវការមូលហេតុ) |
+
+### អតិថិជន (CRM)
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| GET | `/api/customers` (`?search=` `?ctype=`) | គ្រប់គ្នា |
+| GET | `/api/customers/:id` (+ ប្រវត្តិទិញ + ពិន្ទុ) | គ្រប់គ្នា |
+| POST/PATCH | `/api/customers` | sales |
+| POST | `/api/customers/:id/redeem` (ដូរពិន្ទុ) | sales |
+
+លេខទូរស័ព្ទស្ទួនត្រូវបដិសេធស្វ័យប្រវត្តិ — ទោះវាយ `0966 777 888` ឬ `096-677 7888` ក៏ប្រព័ន្ធដឹងថាជាមនុស្សតែម្នាក់។
+
+### ការលក់
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| GET | `/api/orders` · `/api/orders/:id` | គ្រប់គ្នា |
+| POST | `/api/orders` (draft) | sales |
+| POST | `/api/orders/:id/confirm` | sales → **ដកស្តុក + ផ្តល់ពិន្ទុ** |
+| POST | `/api/orders/:id/payments` | sales/accountant |
+| POST | `/api/orders/:id/cancel` | admin → **ស្តុក និងពិន្ទុត្រឡប់វិញ** |
+
+លំហូរ: `draft` → `confirmed` (ដកស្តុក) → បង់ប្រាក់ → `paid`
+បើមិនដាក់ `unit_price` ប្រព័ន្ធយកតម្លៃពី SKU ស្វ័យប្រវត្តិ។
+
+### ហិរញ្ញវត្ថុ
+| Method | Path | សិទ្ធិ |
+|---|---|---|
+| GET/POST | `/api/finance/categories` | បន្ថែម: admin |
+| GET/POST | `/api/finance/expenses` | accountant |
+| GET/POST | `/api/finance/assets` | accountant |
+| POST | `/api/finance/depreciation/post` | accountant → រំលស់ស្វ័យប្រវត្តិ |
+| GET | `/api/finance/pnl` | accountant |
+| GET | `/api/finance/receivables` | accountant/sales |
+
+រំលស់គិតតាមខ្សែត្រង់: `(តម្លៃទិញ − សំណល់) ÷ អាយុកាល(ខែ)`។ មាន unique index ការពារកុំឱ្យប្រកាសស្ទួនក្នុងខែតែមួយ។
+
+### របាយការណ៍
+| Method | Path |
+|---|---|
+| GET | `/api/reports/dashboard` (សម្រាប់ទំព័រដើម និង Telegram) |
+| GET | `/api/reports/sales-by-product` · `/top-customers` · `/dormant-customers` |
+| GET | `/api/reports/seasonal` (ព្យាករតាមរដូវកាល) |
+| GET | `/api/reports/batch-cost/:id` (តម្លៃដើមក្នុងមួយ batch) |
+| GET | `/api/reports/yield` |
+
+---
+
+## ៥. តេស្តដែលបានធ្វើរួច ✅
+
+ប្រព័ន្ធនេះត្រូវបានរត់តេស្តជាមួយ PostgreSQL ១៦ ពិតប្រាកដ:
+
+- ✅ Login · បង្កើតអ្នកប្រើ · JWT
+- ✅ RBAC: sales ព្យាយាមបង្កើតការទិញ → បដិសេធ; គ្មាន token → បដិសេធ
+- ✅ លេខទូរស័ព្ទ `012-345 678` និង `+855 92 111 222` → normalize ត្រឹមត្រូវ; លេខខុស `123` → បដិសេធ
+- ✅ ទិញ ២ តោន → ស្តុកឡើង 2000 kg (ការបម្លែងឯកតាដំណើរការ)
+- ✅ ព្យាយាមប្រើ 5000 kg ខណៈមាន 2000 kg → បដិសេធជាមួយសារខ្មែរ
+- ✅ Batch: input 1900 kg → output 1700 kg → yield 89.47% គណនាស្វ័យប្រវត្តិ
+- ✅ វេចខ្ចប់ ៣០ បាវ → ស្តុកផលិតផលសម្រេច ៣០ units
+- ✅ Supplier reliability: on-time 100% គណនាពីទិន្នន័យពិត
+
+### ដំណាក់កាល ២
+- ✅ លេខទូរស័ព្ទស្ទួន `0966 777 888` vs `096-677 7888` → បដិសេធ (ដឹងថាមនុស្សតែម្នាក់)
+- ✅ លក់ ១០០ បាវ ខណៈមាន ២០ → បដិសេធ
+- ✅ វិក្កយបត្រ $250 → ពិន្ទុ ២៥; បញ្ចុះតម្លៃ $10 លើ $200 → total $190 → ពិន្ទុ ១៩
+- ✅ បង់ $100/$190 → `partial`; បង់សល់ $90 → `paid`; បង់លើស → បដិសេធ
+- ✅ លុបចោលវិក្កយបត្របញ្ជាក់រួច → ស្តុកត្រឡប់ ៣០ និងពិន្ទុដកវិញមក ០
+- ✅ រំលស់ $6000/៦០ខែ/សំណល់ $600 → $90/ខែ; ប្រកាសម្តងទៀត → skip មិនស្ទួន
+- ✅ តម្លៃដើម batch: វត្ថុធាតុដើម $345 + ចំណាយ $120 = $465 → $0.2735/kg → $15.50/បាវ
+- ✅ P&L: ចំណូល $190 − COGS $120 − OPEX $90 = ខាត −$20
+- ✅ RBAC: sales មើល P&L និងលុបចោលវិក្កយបត្រ → បដិសេធទាំងពីរ
+
+### ដំណាក់កាល ៤ — ជួររង់ចាំ
+តេស្តខាងម៉ាស៊ីនមេ (PostgreSQL ពិត):
+- ✅ ផ្ញើកែតម្រូវ −៥០ គីឡូ ដដែល **៣ ដង** ជាមួយលេខសម្គាល់ដដែល → ស្តុកដកតែម្តង (៥០០ → ៤៥០)
+- ✅ ការផ្ញើឡើងវិញត្រឡប់ header `Idempotent-Replay: true`
+- ✅ លេខសម្គាល់ដដែល តែខ្លឹមសារខុសគ្នា → 422 (ការពារការប្រើលេខច្រឡំ)
+- ✅ ការបដិសេធតាមវិធានអាជីវកម្ម រក្សាទុក ហើយឆ្លើយចម្លើយដដែល (ទូរស័ព្ទឈប់ព្យាយាមឥតប្រយោជន៍)
+- ✅ គ្មាន `Idempotency-Key` → ដំណើរការធម្មតាដដែល
+- ✅ ចូលខុស ១០ ដង → 429 រយៈពេល ១៥ នាទី
+
+តេស្តខាងទូរស័ព្ទ (`cd web && npm test` — ៤ តេស្ត ជាប់ទាំងអស់):
+- ✅ សំណើចូលជួរពេលដាច់ ហើយផ្ញើតាមលំដាប់ដើម (ការទិញមុនផលិតកម្ម)
+- ✅ បណ្តាញដាច់ពាក់កណ្តាល → សំណើមិនបាត់ ហើយផ្ញើឡើងវិញដោយ**លេខសម្គាល់ដដែល**
+- ✅ ការបដិសេធតាមវិធានអាជីវកម្ម → បង្ហាញមូលហេតុ មិនស្ងាត់ស្ងៀម
+- ✅ កំហុសម៉ាស៊ីនមេ (5xx) → ឈប់ភ្លាម រក្សាលំដាប់ ព្យាយាមក្រោយ
+
+### កំហុសដែលរកឃើញ និងកែរួច (ដោយសារតេស្តពិត)
+1. Enum casting — `COALESCE($n, ...)` លើ column enum បង្ក error 42804 (customers.ctype, users.role)
+2. `pay_status` — CASE expression ត្រឡប់ text ត្រូវការ `::payment_status`
+3. **របាយការណ៍លក់រាប់វិក្កយបត្រលុបចោល** — `LEFT JOIN ... AND status='confirmed'` នៅតែរាប់ជួរ។ បង្ហាញ ១១៨ បាវ ខណៈពិតជា ៨។ កែដោយប្រើ `FILTER (WHERE ...)`
+
+---
+
+## ៦. ផ្ទាំងប្រើប្រាស់ (Frontend)
+
+```
+web/
+├── index.html · vite.config.js
+├── public/          # manifest · service worker · icon
+└── src/
+    ├── App.jsx      # routing · auth context · របារនាំផ្លូវតាមតួនាទី
+    ├── api.js       # ហៅ API · JWT · ទម្រង់លុយ/គីឡូ/កាលបរិច្ឆេទ
+    ├── offline.js   # ជួរសំណើរង់ចាំ (IndexedDB) · ផ្ញើឡើងវិញស្វ័យប្រវត្តិ
+    ├── QueueBanner.jsx
+    ├── styles.css   # ប្រព័ន្ធរចនា
+    ├── ui.jsx       # Section · Tag · Field · useData
+    ├── pages/       # ១២ ទំព័រ
+    └── test/        # តេស្តជួររង់ចាំ — npm test
+```
+
+**ការសម្រេចចិត្តរចនា**
+
+ឧបករណ៍នេះជាសៀវភៅកត់ត្រារបស់រោងចក្រ មិនមែនគេហទំព័រទីផ្សារ។ ដូច្នេះ៖
+- **លេខតម្រឹមស្តាំ ជួរតែមួយ** (`tabular-nums`) — អានតួលេខលឿន ដូចសៀវភៅគណនី
+- **បន្ទាត់ស្តើង ជំនួសកាតមូល និងស្រមោល** — អានច្បាស់ក្រោមពន្លឺថ្ងៃនៅរោងចក្រ
+- **របារនាំផ្លូវនៅខាងក្រោម** — មេដៃឈោងដល់ ពេលកាន់ទូរស័ព្ទដៃម្ខាង
+- **ប៊ូតុងធំយ៉ាងតិច ៤៦px** — ចុចបានទោះដៃប្រឡាក់
+- Kantumruy Pro សម្រាប់អក្សរខ្មែរទាំងអស់ ដូចគេហទំព័រ
+
+**របារនាំផ្លូវប្រែតាមតួនាទី** — ឧ. អ្នកគ្រប់គ្រងស្តុកឃើញ ស្តុក/ផលិត/ទិញ ចំណែកបុគ្គលិកលក់ឃើញ លក់/អតិថិជន។ សិទ្ធិពិតនៅតែអនុវត្តខាង API ដដែល — ការលាក់ menu ត្រឹមតែជួយឱ្យផ្ទាំងស្អាត មិនមែនជាសុវត្ថិភាព។
+
+**PWA** — មាន manifest និង service worker។ បើកតាម browser លើទូរស័ព្ទ រួចចុច «Add to Home Screen» នោះកម្មវិធីដំណើរការដូច app ធម្មតា។ បើអ៊ីនធឺណិតដាច់ កម្មវិធីនៅតែបើកបាន ហើយបង្ហាញទិន្នន័យចម្លងចុងក្រោយ ព្រមទាំងដាស់តឿនថា «គ្មានអ៊ីនធឺណិត»។
+
+### ការកត់ត្រាពេលបណ្តាញដាច់ (offline write queue)
+
+នៅរោងចក្រ អ៊ីនធឺណិតដាច់ៗ។ សំណើដែលផ្ញើមិនកើត រក្សាទុកក្នុង **IndexedDB** (នៅដដែលទោះបិទកម្មវិធី ឬបិទទូរស័ព្ទ) រួចផ្ញើឡើងវិញតាមលំដាប់ដើមពេលបណ្តាញត្រឡប់មក។
+
+**បញ្ហាពិបាកបំផុត** មិនមែនការរក្សាទុកទេ — គឺ *ការផ្ញើម្តងទៀត*។ ពេលបណ្តាញដាច់ពាក់កណ្តាល ទូរស័ព្ទមិនដឹងថាសំណើទៅដល់ម៉ាស៊ីនមេឬអត់។ បើផ្ញើម្តងទៀត ស្តុកអាចដកពីរដង។
+
+ដំណោះស្រាយ៖ សំណើនីមួយៗមានលេខសម្គាល់តែមួយ (`Idempotency-Key`) បង្កើតតាំងពីដំបូង។ ម៉ាស៊ីនមេចាំលេខនោះ — ផ្ញើដដែលប៉ុន្មានដងក៏ដោយ វាធ្វើតែម្តង ហើយឆ្លើយចម្លើយដដែល។
+
+**អ្វីខ្លះចូលជួររង់ចាំបាន**
+
+| ធ្វើបានពេលបណ្តាញដាច់ | ត្រូវការបណ្តាញ |
+|---|---|
+| បញ្ជាទិញថ្មី · បញ្ជាក់ចូលស្តុក | ការលក់ |
+| បញ្ចូលវត្ថុធាតុដើមចូល batch | ការទូទាត់ |
+| បញ្ចប់ batch · វេចខ្ចប់ | លុបចោលវិក្កយបត្រ |
+| កែតម្រូវស្តុក | របាយការណ៍ |
+
+> **ការលក់មិនចូលជួររង់ចាំទេ — ដោយចេតនា។** អ្នកលក់ត្រូវដឹងភ្លាមថាស្តុកគ្រប់ ឬអត់ មុនប្រាប់អតិថិជន។ ការទទួល «រក្សាទុករួច» រួចដឹងម៉ោងក្រោយថាស្តុកអស់ គឺអាក្រក់ជាងការប្រាប់ថា «ត្រូវការអ៊ីនធឺណិត» តាំងពីដំបូង។
+
+**ពេលសំណើបរាជ័យ** (ឧ. ស្តុកមិនគ្រប់ ព្រោះមានគេប្រើអស់មុន) របារប្រែជាពណ៌ក្រហម បង្ហាញមូលហេតុជាភាសាខ្មែរ ហើយ**មិនលុបស្ងាត់ៗទេ** — អ្នកប្រើត្រូវឃើញ រួចសម្រេចថាធ្វើម្តងទៀត ឬលុបចោល។
+
+---
+
+## ៧. ជំហានបន្ទាប់
+
+**ដំណាក់កាល ៣**
+- Telegram Bot សង្ខេបប្រចាំថ្ងៃ (ហៅ `/api/reports/dashboard` រួចផ្ញើ)
+- ជូនដំណឹងស្តុកទាបស្វ័យប្រវត្តិ (`/api/inventory/low`)
+- របាយការណ៍ PDF ជាមួយក្បាលក្រដាសក្រុមហ៊ុន
+
+**នៅសល់**
+- Migration ពី Google Sheets (parallel run មុនប្តូរពេញលេញ — មើល DEPLOY.md ផ្នែក ឃ.៥)
+- ផ្ទាំងគ្រប់គ្រងអ្នកប្រើ (បច្ចុប្បន្នបង្កើតគណនីតាម API)
+
+---
+
+## ៨. មុនដាក់ដំណើរការពិត (Production checklist)
+
+- [ ] ប្តូរ `JWT_SECRET` ជាតម្លៃចៃដន្យវែង
+- [ ] ប្តូរពាក្យសម្ងាត់ admin
+- [ ] បើក HTTPS
+- [ ] កំណត់ `CORS_ORIGIN` ក្នុង `.env` ជាដូមេនពិត
+- [ ] រៀបចំ backup database ស្វ័យប្រវត្តិប្រចាំថ្ងៃ (DEPLOY.md ផ្នែក ខ.១២)
+- [x] Rate limiting លើ `/api/auth/login` — ១០ ដង/១៥ នាទី ក្នុងមួយ IP
