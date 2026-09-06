@@ -110,6 +110,10 @@ modern-farmer/
 | GET/POST | `/api/catalog/suppliers` | មើល: គ្រប់គ្នា · បន្ថែម: stock |
 | GET/POST | `/api/catalog/materials` | មើល: គ្រប់គ្នា · បន្ថែម: stock |
 | GET/POST | `/api/catalog/products` | បន្ថែម: admin |
+| GET/PATCH | `/api/catalog/settings` | មើល: គ្រប់គ្នា · កែ: admin |
+| PATCH | `/api/catalog/materials/:id` | stock — កម្រិតបញ្ជាទិញ |
+| PATCH | `/api/catalog/packaging/:id` | admin — ថ្លៃដើមកញ្ចប់ |
+| PATCH | `/api/catalog/variants/:id` | admin — តម្លៃលក់ |
 | POST | `/api/catalog/variants` | admin (បន្ថែម SKU ថ្មីពេលចេញវេចខ្ចប់ថ្មី) |
 
 ### ការទិញ
@@ -242,6 +246,13 @@ POST /api/purchases
 - ✅ បិទ admin ចុងក្រោយ → បដិសេធ
 - ✅ ប្តូរពាក្យសម្ងាត់ខ្លួនឯងដោយវាយពាក្យសម្ងាត់ចាស់ខុស → បដិសេធ
 - ✅ បុគ្គលិកលក់មើលបញ្ជីគណនី → បដិសេធ
+
+### ដំណាក់កាល ៦ — ឡូហ្គោ និងការកែលេខ
+- ✅ ប្តូរការកំណត់ពិន្ទុ ($10 → $5 ក្នុង ១ ពិន្ទុ) → ការលក់ $100 ផ្តល់ ២០ ពិន្ទុ ជំនួស ១០ ភ្លាមៗ
+- ✅ កែតម្លៃលក់ SKU $25 → $27.50 → ការលក់ថ្មីប្រើតម្លៃថ្មីស្វ័យប្រវត្តិ
+- ✅ កែកម្រិតបញ្ជាទិញ ៥០០ → ៨០០ គ.ក → ការជូនដំណឹងស្តុកទាបប្រែតាមភ្លាម
+- ✅ តម្លៃអវិជ្ជមាន · ម៉ោង ២៥ · ការកំណត់មិនស្គាល់ → បដិសេធទាំងអស់
+- ✅ បុគ្គលិកលក់កែតម្លៃ → បដិសេធ
 
 ### កំហុសដែលរកឃើញ និងកែរួច (ដោយសារតេស្តពិត)
 1. Enum casting — `COALESCE($n, ...)` លើ column enum បង្ក error 42804 (customers.ctype, users.role)
