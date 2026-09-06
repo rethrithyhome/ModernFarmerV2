@@ -38,6 +38,31 @@ router.get('/dashboard', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+/**
+ * និន្នាការចំណូលប្រចាំថ្ងៃ — សម្រាប់ក្រាហ្វិកលើ Dashboard
+ * បំពេញថ្ងៃដែលគ្មានការលក់ដោយ ០ ដើម្បីកុំឱ្យក្រាហ្វិកខូចទ្រង់ទ្រាយ
+ * (បើគ្មានជួរនោះ ក្រាហ្វិកនឹងគូសបន្ទាត់រំលងថ្ងៃទទេ ធ្វើឱ្យអានខុស)
+ */
+router.get('/revenue-trend', async (req, res, next) => {
+  try {
+    const days = Math.min(Math.max(Number(req.query.days) || 30, 7), 90);
+    const { rows } = await query(
+      `SELECT d::date AS day,
+              COALESCE(o.revenue, 0) AS revenue,
+              COALESCE(o.order_count, 0)::int AS order_count
+       FROM generate_series(CURRENT_DATE - ($1::int - 1), CURRENT_DATE, '1 day') d
+       LEFT JOIN (
+         SELECT order_date, SUM(total) AS revenue, COUNT(*) AS order_count
+         FROM orders WHERE status = 'confirmed' AND order_date >= CURRENT_DATE - ($1::int - 1)
+         GROUP BY order_date
+       ) o ON o.order_date = d::date
+       ORDER BY d`,
+      [days]
+    );
+    res.json(rows);
+  } catch (e) { next(e); }
+});
+
 // ការលក់តាមផលិតផល
 router.get('/sales-by-product', async (req, res, next) => {
   try {

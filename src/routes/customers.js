@@ -15,7 +15,23 @@ router.get('/', async (req, res, next) => {
       `SELECT s.*, c.address, c.province, c.notes, c.is_active
        FROM v_customer_summary s
        JOIN customers c ON c.id = s.customer_id
-       WHERE ($1::text IS NULL OR s.name ILIKE '%'||$1||'%' OR c.phone_e164 ILIKE '%'||$1||'%')
+       WHERE ($1::text IS NULL OR
+         s.name ILIKE '%'||$1||'%' OR
+         (
+           /*
+            * ស្វែងរកតាមលេខទូរស័ព្ទ — ប្រៀបធៀបលេខសុទ្ធ (គ្មានចន្លោះ/សញ្ញា)
+            * ប្រឆាំងនឹង phone_display មិនមែន phone_e164 ទេ ព្រោះ e164 ជំនួស
+            * លេខ ០ ដើមដោយកូដប្រទេស (+855) ដូច្នេះការវាយបែបធម្មតា "096777888"
+            * គ្មានថ្ងៃណាចូលគ្នានឹង "+85596777888" បានទេ (គ្មាន 0 សោះក្នុងនោះ)។
+            * phone_display រក្សា 0 ដើម ដូច្នេះត្រូវនឹងអ្វីដែលអ្នកប្រើគិត/វាយ។
+            * ធានាមិនប៉ះពាល់ការស្វែងរកតាមឈ្មោះសុទ្ធ ដោយកំណត់លក្ខខណ្ឌនេះ
+            * ឱ្យប្រើតែពេលមានលេខយ៉ាងតិច ៣ ខ្ទង់ក្នុងអក្សរដែលវាយ (regexp_replace ទទេ = មិនផ្គូផ្គង់)
+            */
+           length(regexp_replace($1, '\\D', '', 'g')) >= 3 AND
+           regexp_replace(COALESCE(c.phone_display, ''), '\\D', '', 'g')
+             ILIKE '%'||regexp_replace($1, '\\D', '', 'g')||'%'
+         )
+       )
          AND ($2::text IS NULL OR s.ctype::text = $2)
        ORDER BY s.lifetime_value DESC
        LIMIT $3`,
