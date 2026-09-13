@@ -1,7 +1,7 @@
 import express from 'express';
 import { query, withTransaction } from '../config/db.js';
 import { authRequired, requireRole } from '../middleware/auth.js';
-import { requireValidPhone } from '../utils/phone.js';
+import { requireValidPhone, normalizePhone } from '../utils/phone.js';
 import { getUnits, clearUnitCache } from '../utils/units.js';
 import { logAudit } from '../utils/audit.js';
 
@@ -93,6 +93,22 @@ router.patch('/settings', requireRole('admin'), async (req, res, next) => {
     res.json(updated);
   } catch (e) { next(e); }
 });
+/**
+ * ស្វែងរកអ្នកផ្គត់ផ្គង់ដោយលេខទូរស័ព្ទ (ផ្គូផ្គងពិតប្រាកដ)
+ * ប្រើសម្រាប់ពិនិត្យស្ទួនភ្លាមៗ ពេលបុគ្គលិកវាយលេខទូរស័ព្ទក្នុងទម្រង់បញ្ចូលថ្មី
+ */
+router.get('/suppliers/by-phone', async (req, res, next) => {
+  try {
+    const p = normalizePhone(req.query.phone);
+    if (!p || !p.valid) return res.json(null);
+    const { rows } = await query(
+      'SELECT id, name, phone_display, is_active FROM suppliers WHERE phone_e164 = $1',
+      [p.e164]
+    );
+    res.json(rows[0] || null);
+  } catch (e) { next(e); }
+});
+
 router.get('/suppliers', async (req, res, next) => {
   try {
     const { rows } = await query(
@@ -108,23 +124,43 @@ router.get('/suppliers', async (req, res, next) => {
 });
 
 router.post('/suppliers', requireRole('stock'), async (req, res, next) => {
+  let phoneE164 = null;
   try {
     const { name, phone, address, notes } = req.body;
     if (!name) return res.status(400).json({ error: 'ត្រូវការឈ្មោះអ្នកផ្គត់ផ្គង់' });
     const p = requireValidPhone(phone);
+    phoneE164 = p.e164;
     const { rows } = await query(
       `INSERT INTO suppliers (name, phone_e164, phone_display, address, notes)
        VALUES ($1,$2,$3,$4,$5) RETURNING *`,
       [name, p.e164, p.display, address || null, notes || null]
     );
     res.status(201).json(rows[0]);
-  } catch (e) { next(e); }
+  } catch (e) {
+    if (e.code === '23505' && phoneE164) {
+      // ប្រាប់ឈ្មោះម្ចាស់លេខទូរស័ព្ទនេះ ដើម្បីជួយបុគ្គលិកកុំបង្កើតស្ទួន
+      // (ប្រើ e164 ដែលបានផ្ទៀងផ្ទាត់រួចហើយ — មិនហៅ requireValidPhone ម្តងទៀត
+      // ក្នុង catch ទេ ព្រោះបើវាបោះកំហុសនៅទីនេះ Express មិនចាប់វាបានទេ)
+      const existing = await query(
+        'SELECT name FROM suppliers WHERE phone_e164 = $1', [phoneE164]
+      ).catch(() => ({ rows: [] }));
+      const existingName = existing.rows[0]?.name;
+      return res.status(409).json({
+        error: existingName
+          ? `លេខទូរស័ព្ទនេះជារបស់ "${existingName}" រួចហើយ`
+          : 'លេខទូរស័ព្ទនេះមានអ្នកផ្គត់ផ្គង់ផ្សេងប្រើរួចហើយ',
+      });
+    }
+    next(e);
+  }
 });
 
 router.patch('/suppliers/:id', requireRole('stock'), async (req, res, next) => {
+  let phoneE164 = null;
   try {
     const { name, phone, address, notes, is_active } = req.body;
     const p = phone !== undefined ? requireValidPhone(phone) : null;
+    phoneE164 = p?.e164 ?? null;
     const { rows } = await query(
       `UPDATE suppliers SET
          name = COALESCE($2, name),
@@ -139,7 +175,21 @@ router.patch('/suppliers/:id', requireRole('stock'), async (req, res, next) => {
     );
     if (!rows[0]) return res.status(404).json({ error: 'រកមិនឃើញអ្នកផ្គត់ផ្គង់' });
     res.json(rows[0]);
-  } catch (e) { next(e); }
+  } catch (e) {
+    if (e.code === '23505' && phoneE164) {
+      const existing = await query(
+        'SELECT name FROM suppliers WHERE phone_e164 = $1 AND id != $2',
+        [phoneE164, req.params.id]
+      ).catch(() => ({ rows: [] }));
+      const existingName = existing.rows[0]?.name;
+      return res.status(409).json({
+        error: existingName
+          ? `លេខទូរស័ព្ទនេះជារបស់ "${existingName}" រួចហើយ`
+          : 'លេខទូរស័ព្ទនេះមានអ្នកផ្គត់ផ្គង់ផ្សេងប្រើរួចហើយ',
+      });
+    }
+    next(e);
+  }
 });
 
 // ---------- វត្ថុធាតុដើម ----------
