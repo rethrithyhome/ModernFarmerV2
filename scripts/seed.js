@@ -18,6 +18,7 @@ async function main() {
       '../db/migration_003_offline.sql',
       '../db/migration_004_users.sql',
       '../db/migration_005_currency_riel.sql',
+      '../db/migration_006_supplier_phone_unique.sql',
     ]) {
       const sql = fs.readFileSync(path.join(__dirname, f), 'utf8');
       await pool.query(sql);
