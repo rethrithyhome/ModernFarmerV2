@@ -2,6 +2,67 @@ import { useState } from 'react';
 import { useData, Section, Loading, Notice, Empty, Field } from '../ui';
 import { api, money, date, currencyLabel } from '../api';
 
+function AssetForm({ onDone }) {
+  const [f, setF] = useState({
+    name_km: '', purchase_cost: '', purchase_date: '',
+    useful_life_months: '', salvage_value: '',
+  });
+  const [msg, setMsg] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const set = (patch) => setF({ ...f, ...patch });
+
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true); setMsg(null);
+    try {
+      await api.post('/finance/assets', {
+        name_km: f.name_km,
+        purchase_cost: Number(f.purchase_cost),
+        purchase_date: f.purchase_date || null,
+        useful_life_months: Number(f.useful_life_months),
+        salvage_value: Number(f.salvage_value || 0),
+      });
+      setMsg({ tone: 'ok', text: 'កត់ត្រាទ្រព្យរួចរាល់' });
+      setF({ name_km: '', purchase_cost: '', purchase_date: '', useful_life_months: '', salvage_value: '' });
+      onDone();
+    } catch (err) { setMsg({ tone: 'error', text: err.message }); } finally { setBusy(false); }
+  }
+
+  return (
+    <form onSubmit={submit}>
+      {msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
+      <Field label="ឈ្មោះទ្រព្យ">
+        <input value={f.name_km} required placeholder="ឧ. ម៉ាស៊ីនលាយជី"
+               onChange={(e) => set({ name_km: e.target.value })} />
+      </Field>
+      <div className="split">
+        <Field label={`តម្លៃទិញ (${currencyLabel()})`}>
+          <input type="number" step="any" min="0" value={f.purchase_cost} required
+                 onChange={(e) => set({ purchase_cost: e.target.value })} />
+        </Field>
+        <Field label="កាលបរិច្ឆេទទិញ">
+          <input type="date" value={f.purchase_date}
+                 onChange={(e) => set({ purchase_date: e.target.value })} />
+        </Field>
+      </div>
+      <div className="split">
+        <Field label="អាយុកាលប្រើប្រាស់ (ខែ)">
+          <input type="number" min="1" value={f.useful_life_months} required
+                 placeholder="ឧ. 60" onChange={(e) => set({ useful_life_months: e.target.value })} />
+        </Field>
+        <Field label={`តម្លៃសល់ (${currencyLabel()})`}>
+          <input type="number" step="any" min="0" value={f.salvage_value}
+                 placeholder="0" onChange={(e) => set({ salvage_value: e.target.value })} />
+        </Field>
+      </div>
+      <p className="notice info">
+        រំលស់ប្រចាំខែគណនាតាមខ្សែត្រង់៖ (តម្លៃទិញ − តម្លៃសល់) ÷ អាយុកាល(ខែ)។
+      </p>
+      <button className="btn wide" disabled={busy}>កត់ត្រាទ្រព្យ</button>
+    </form>
+  );
+}
+
 function ExpenseForm({ categories, onDone }) {
   const [f, setF] = useState({ category_id: '', description: '', amount: '' });
   const [msg, setMsg] = useState(null);
@@ -168,24 +229,29 @@ export default function Finance() {
       )}
 
       {tab === 'assets' && (
-        <Section title="ទ្រព្យ និងរំលស់"
-                 action={<button className="btn small" disabled={busy}
-                                 onClick={postDepreciation}>ប្រកាសរំលស់ខែនេះ</button>}>
-          {assets.loading ? <Loading /> : assets.error ? <Notice tone="error">{assets.error}</Notice>
-            : assets.data.length === 0 ? <Empty>មិនទាន់មានទ្រព្យកត់ត្រា</Empty>
-            : assets.data.map((a) => (
-                <div className="row" key={a.asset_id}>
-                  <div className="grow">
-                    <span className="name">{a.name_km}</span>
-                    <span className="sub">
-                      ទិញ {money(a.purchase_cost)} · {a.useful_life_months} ខែ ·
-                      តម្លៃសៀវភៅ {money(a.book_value)}
-                    </span>
+        <>
+          <Section title="កត់ត្រាទ្រព្យថ្មី">
+            <AssetForm onDone={() => { assets.reload(); }} />
+          </Section>
+          <Section title="ទ្រព្យ និងរំលស់"
+                   action={<button className="btn small" disabled={busy}
+                                   onClick={postDepreciation}>ប្រកាសរំលស់ខែនេះ</button>}>
+            {assets.loading ? <Loading /> : assets.error ? <Notice tone="error">{assets.error}</Notice>
+              : assets.data.length === 0 ? <Empty>មិនទាន់មានទ្រព្យកត់ត្រា</Empty>
+              : assets.data.map((a) => (
+                  <div className="row" key={a.asset_id}>
+                    <div className="grow">
+                      <span className="name">{a.name_km}</span>
+                      <span className="sub">
+                        ទិញ {money(a.purchase_cost)} · {a.useful_life_months} ខែ ·
+                        តម្លៃសៀវភៅ {money(a.book_value)}
+                      </span>
+                    </div>
+                    <span className="num">{money(a.monthly_depreciation)}/ខែ</span>
                   </div>
-                  <span className="num">{money(a.monthly_depreciation)}/ខែ</span>
-                </div>
-              ))}
-        </Section>
+                ))}
+          </Section>
+        </>
       )}
     </>
   );
