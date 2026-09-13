@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData, Section, Loading, Notice, Empty, Field } from '../ui';
 import { api, money, kg, currencyLabel, moneyStep, getCurrency, setCurrency } from '../api';
 import { useAuth } from '../App';
@@ -43,9 +43,77 @@ function Form({ fields, onSubmit, submitLabel }) {
 }
 
 /**
- * កែលេខតាមជួរ — ចុច «កែ» → វាយលេខថ្មី → រក្សាទុក
- * ប្រើសម្រាប់ តម្លៃលក់ · ថ្លៃដើមវេចខ្ចប់ · កម្រិតបញ្ជាទិញ
+ * ទម្រង់បន្ថែមអ្នកផ្គត់ផ្គង់ — លេខទូរស័ព្ទដាក់មុន ហើយពិនិត្យស្ទួនភ្លាមៗ
+ * ពេលឈប់វាយ (មិនចាំបាច់រង់ចាំដល់ចុច «រក្សាទុក» ទើបដឹងថាស្ទួន)
  */
+function SupplierForm({ onDone }) {
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [match, setMatch] = useState(null);   // អ្នកផ្គត់ផ្គង់ដែលមានស្រាប់ ប្រសិនរកឃើញ
+  const [checking, setChecking] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const [busy, setBusy] = useState(false);
+
+  // ពិនិត្យស្ទួនស្វ័យប្រវត្តិ ក្រោយឈប់វាយ ៤០០ ម.វិ. (មិនសួរម៉ាស៊ីនមេរាល់តួអក្សរ)
+  useEffect(() => {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 8) { setMatch(null); return; }
+    setChecking(true);
+    const t = setTimeout(() => {
+      api.get(`/catalog/suppliers/by-phone?phone=${encodeURIComponent(phone)}`)
+        .then(setMatch)
+        .catch(() => setMatch(null))
+        .finally(() => setChecking(false));
+    }, 400);
+    return () => clearTimeout(t);
+  }, [phone]);
+
+  async function submit(e) {
+    e.preventDefault();
+    setBusy(true); setMsg(null);
+    try {
+      await api.post('/catalog/suppliers', { name, phone, address });
+      setMsg({ tone: 'ok', text: 'រក្សាទុករួចរាល់' });
+      setPhone(''); setName(''); setAddress(''); setMatch(null);
+      onDone();
+    } catch (err) {
+      setMsg({ tone: 'error', text: err.message });
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <form onSubmit={submit}>
+      {msg && <Notice tone={msg.tone}>{msg.text}</Notice>}
+
+      <Field label="លេខទូរស័ព្ទ">
+        <input type="tel" value={phone} placeholder="012 345 678"
+               onChange={(e) => setPhone(e.target.value)} />
+      </Field>
+
+      {checking && <p className="notice info">កំពុងពិនិត្យ…</p>}
+
+      {match && (
+        <Notice tone="error">
+          លេខនេះមានកត់ត្រារួចហើយ — ឈ្មោះ «{match.name}»{!match.is_active ? ' (បិទដំណើរការ)' : ''}។
+          សូមកុំបង្កើតស្ទួន — ប្រើអ្នកផ្គត់ផ្គង់ដែលមានស្រាប់ជំនួសវិញ។
+        </Notice>
+      )}
+
+      <Field label="ឈ្មោះ">
+        <input value={name} required onChange={(e) => setName(e.target.value)} />
+      </Field>
+      <Field label="អាសយដ្ឋាន">
+        <input value={address} onChange={(e) => setAddress(e.target.value)} />
+      </Field>
+
+      <button className="btn wide" disabled={busy || !!match}>
+        {match ? 'មានស្ទួនរួចហើយ — មិនអាចរក្សាទុកបាន' : 'រក្សាទុក'}
+      </button>
+    </form>
+  );
+}
+
 function NumberEdit({ value, suffix = '', prefix = '', asMoney = false, onSave, canEdit = true }) {
   const [editing, setEditing] = useState(false);
   const [v, setV] = useState(String(value ?? ''));
@@ -257,15 +325,7 @@ export default function Settings() {
       {tab === 'suppliers' && suppliers.data && (
         <>
           <Section title="បន្ថែមអ្នកផ្គត់ផ្គង់">
-            <Form
-              submitLabel="រក្សាទុក"
-              fields={[
-                { name: 'name', label: 'ឈ្មោះ', required: true },
-                { name: 'phone', label: 'លេខទូរស័ព្ទ', type: 'tel', placeholder: '012 345 678' },
-                { name: 'address', label: 'អាសយដ្ឋាន' },
-              ]}
-              onSubmit={async (v) => { await api.post('/catalog/suppliers', v); suppliers.reload(); }}
-            />
+            <SupplierForm onDone={suppliers.reload} />
           </Section>
           <Section title="បញ្ជីអ្នកផ្គត់ផ្គង់" meta={`${suppliers.data.length} នាក់`}>
             {suppliers.data.length === 0 ? <Empty>មិនទាន់មាន</Empty>
